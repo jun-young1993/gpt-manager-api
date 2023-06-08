@@ -19,6 +19,7 @@ export class MailService {
 			  </form>  
 			  `,
 		      }
+			  console.log(mailOptions);
 		const result = await transporter.sendMail(mailOptions)
 		console.log('result',result);
 	}
