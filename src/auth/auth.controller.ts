@@ -2,14 +2,27 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { ConfigService } from '@nestjs/config';
+import { MailService } from 'src/mail/mail.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService : ConfigService,
+    private readonly mailService : MailService
+  ) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Post('mail/:email')
+  sendAuth(
+    @Param('email') email: string
+  ) {
+    
+    const mailerOptions = this.configService.get('mailer');
+    this.mailService.sendLoginCode(
+      mailerOptions,
+      email
+    );
   }
 
   @Get()
