@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { MailService } from 'src/mail/mail.service';
 import { v4 } from "uuid";
 import { Response } from 'express';
+import { MailAuthDto } from './dto/mail-auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +18,7 @@ export class AuthController {
 
   @Post('mail')
   async sendAuth(
-    @Body()  {email},
+    @Body()  {email} : MailAuthDto,
     @Res() res: Response
   ) {
     const mailerOptions = this.configService.get('mailer');
@@ -44,6 +45,15 @@ export class AuthController {
         accepted : accepted
       }
     })
+  }
+
+  @Post('login')
+  async login(
+    @Body() {auth},
+    @Res() res: Response
+  ){
+    console.log("auth",auth)
+    res.status(HttpStatus.OK).json({})
   }
 
   @Get()
