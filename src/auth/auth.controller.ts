@@ -4,7 +4,7 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { ConfigService } from '@nestjs/config';
 import { MailService } from 'src/mail/mail.service';
-import {MailAuthDto} from "./dto/mail-auth.dto";
+import { v4 } from "uuid";
 import { Response } from 'express';
 
 @Controller('auth')
@@ -20,19 +20,29 @@ export class AuthController {
     @Body()  {email},
     @Res() res: Response
   ) {
-
-    // const {email} = mailAuthDto;
-
-    console.log('mail',email);
     const mailerOptions = this.configService.get('mailer');
-    console.log('mailerOptions',mailerOptions);
-    await this.mailService.sendLoginCode(
-      mailerOptions,
-        // email ?? 'hi'
-        email
+    
+    const {accepted} = await this.mailService.sendLoginCode(
+        mailerOptions,
+        email,
+        {
+          subject: '가입 인증 메일',
+          html: `
+          가입확인 버튼를 누르시면 가입 인증이 완료됩니다.<br/>
+          <form action="#" method="POST">
+            <button>가입확인</button>
+          </form>  
+          <div>
+            ${v4()}
+          </div>
+          `,
+        }
     );
+    
     res.status(HttpStatus.OK).json({
-      data : []
+      result : {
+        accepted : accepted
+      }
     })
   }
 
