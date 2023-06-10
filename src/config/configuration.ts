@@ -1,6 +1,8 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 
+import {RedisModuleOptions} from "@liaoliaots/nestjs-redis/dist/redis/interfaces/redis-module-options.interface";
+
 export default () => ({
     db: {
         type: process.env.DB_TYPE,
@@ -22,8 +24,18 @@ export default () => ({
             user: process.env.NODEMAILER_USER,
             pass: process.env.NODEMAILER_PASS,
         }
+    },
+    redis : {
+        host : process.env.REDIS_HOST,
+        port : Number(process.env.REDIS_PORT)
+    },
+    app : {
+        protocol : process.env.APP_PROTOCOL,
+        host : process.env.APP_HOST,
+        port : process.env.APP_PORT,
     }
 } as unknown as {
     db : TypeOrmModuleOptions,
-    mailer ?: string | SMTPTransport | SMTPTransport.Options
+    mailer ?: string | SMTPTransport | SMTPTransport.Options,
+    redis : RedisModuleOptions
 })

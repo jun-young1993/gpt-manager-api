@@ -1,36 +1,23 @@
 import { Module, ValidationPipe } from "@nestjs/common";
 
 import { APP_PIPE } from "@nestjs/core";
-
-import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AuthModule } from './auth/auth.module';
+import  {RedisModule}  from './redis/redis.module';
+import  {ConfigModule}  from './config/config.module';
+import {TypeOrmModule} from './typeorm/typeorm.module';
+
 import configuration from "./config/configuration";
+
+import {ConfigService} from "@nestjs/config";
 
 
 
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load : [configuration]
-    }),
-    TypeOrmModule.forRootAsync({
-      imports : [ConfigModule],
-      useFactory : (configService : ConfigService) => ({
-        logging : true,
-        type: configService.get<string>('db.type'),
-        host: configService.get<string>('db.host'),
-        port: configService.get<string>('db.port'),
-        username: configService.get<string>('db.username'),
-        password: configService.get<string>('db.password'),
-        database: configService.get<string>('db.database'),
-        entities : ["dist/**/*.entity{.ts,.js}"],
-        synchronize : true
-      } as TypeOrmModuleOptions),
-      inject: [ConfigService]
-    }),
+    ConfigModule,
+    TypeOrmModule,
+    RedisModule,
     AuthModule,
   ],
   providers: [{
