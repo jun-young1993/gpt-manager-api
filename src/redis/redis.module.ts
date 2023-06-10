@@ -19,7 +19,7 @@ import { RedisService } from './redis.service';
         }),
         forwardRef(() => RedisModule)
     ],
-    providers: [RedisService],
+    providers: [RedisService,ConfigService],
     exports : [RedisService]
 })
 export class RedisModule {}

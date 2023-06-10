@@ -74,12 +74,17 @@ export class AuthController {
           `,
         }
     );
-    const redisSet = await this.redisService.set(email, ip)
+    const redisTTL = this.configService.get<number>('redis.ttl');
+    const redisSet = await this.redisService.set(email, ip,redisTTL)
     console.log('redisResult',redisSet);
     res.status(HttpStatus.OK).json({
       result : {
         accepted : accepted,
-        cache : redisSet
+        cache : {
+          status : redisSet,
+          ttl : redisTTL
+        },
+
       }
     })
   }
