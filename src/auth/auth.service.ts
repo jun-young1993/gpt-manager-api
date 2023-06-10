@@ -7,7 +7,7 @@ import configuration from 'src/config/configuration';
 @Injectable()
 export class AuthService {
   async create(createAuthDto: CreateAuthDto,mailerOptions) {
-    console.log(mailerOptions);
+
     const transporter = nodeMailer.createTransport(mailerOptions)
   
     const mailOptions = {
@@ -22,7 +22,7 @@ export class AuthService {
         `,
     }
     const result = await transporter.sendMail(mailOptions)
-    console.log('result',result);
+
     return
   }
 
