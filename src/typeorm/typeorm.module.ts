@@ -6,6 +6,7 @@ import {ConfigModule} from "../config/config.module";
 
 
 
+
 @Module({
     imports : [
         NestTypeOrmModule.forRootAsync({
@@ -18,11 +19,15 @@ import {ConfigModule} from "../config/config.module";
                 username: configService.get<string>('db.username'),
                 password: configService.get<string>('db.password'),
                 database: configService.get<string>('db.database'),
-                entities : ["dist/**/*.entity{.ts,.js}"],
-                synchronize : true
+                // entities : ["dist/**/*.entity{.ts,.js}"],
+                entities : [process.env.PWD+"/dist/**/*.entity{.ts,.js}"],
+                // entities : [User],
+                synchronize : true,
+                autoLoadEntities: true,
             } as TypeOrmModuleOptions),
             inject: [ConfigService]
         })
-    ]
+    ],
+    exports : [NestTypeOrmModule]
 })
-export class TypeOrmModule {}
+export class TypeOrmModule{}

@@ -4,11 +4,12 @@ import { APP_PIPE } from "@nestjs/core";
 import { AuthModule } from './auth/auth.module';
 import  {RedisModule}  from './redis/redis.module';
 import  {ConfigModule}  from './config/config.module';
-import {TypeOrmModule} from './typeorm/typeorm.module';
 
-import configuration from "./config/configuration";
+import { UserModule } from './user/user.module';
 
-import {ConfigService} from "@nestjs/config";
+import { TypeOrmModule } from "./typeorm/typeorm.module";
+import { JwtModule } from './jwt/jwt.module';
+import { TestModule } from './test/test.module';
 
 
 
@@ -19,6 +20,9 @@ import {ConfigService} from "@nestjs/config";
     TypeOrmModule,
     RedisModule,
     AuthModule,
+    UserModule,
+    JwtModule,
+    TestModule,
   ],
   providers: [{
     provide: APP_PIPE,

@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Req, HttpException} from '@nestjs/common';
+import {Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Req, HttpException, UseGuards} from '@nestjs/common';
 import {AuthService} from './auth.service';
 
 import {UpdateAuthDto} from './dto/update-auth.dto';
@@ -11,6 +11,7 @@ import {RedisService} from "../redis/redis.service";
 import {RealIP, RealIp} from "nestjs-real-ip";
 import {LoginAuthDto} from "./dto/login-auth.dto";
 import {CheckAuthDto} from "./dto/check-auth.dto";
+
 
 
 @Controller('auth')
@@ -93,13 +94,14 @@ export class AuthController {
         })
     }
 
+    
     @Post('login')
     async login(
         @Body() {email} : LoginAuthDto,
         @RealIP() ip: string,
         @Res() res: Response
     ) {
-
+        
 
         const authIp: string | null = await this.redisService.get(email);
 
@@ -107,7 +109,7 @@ export class AuthController {
             throw new HttpException('NO_CONTENT', HttpStatus.NO_CONTENT);
 
 
-        if (authIp === ip) {
+        // if (authIp === ip) {
             const redisSet = await this.redisService.set(email,email);
             return res.status(HttpStatus.OK).json({
                 cache: {
@@ -115,7 +117,7 @@ export class AuthController {
                 }
             })
 
-        }
+        // }
 
         throw new HttpException("INTERNAL_SERVER_ERROR", HttpStatus.INTERNAL_SERVER_ERROR)
 
@@ -128,9 +130,11 @@ export class AuthController {
         @Res() res: Response
     ) {
 
-
+        
+        
+        
         const authEmail: string | null = await this.redisService.get(email);
-        console.log(authEmail)
+        
         if (authEmail === null)
             throw new HttpException('NO_CONTENT', HttpStatus.NO_CONTENT);
 
@@ -139,10 +143,12 @@ export class AuthController {
 
         if (authEmail === email) {
             const redisSet = await this.redisService.delete(email);
+            const cookie = await this.authService.getCookieWithJwtToken(email);
+            res.setHeader('Set-Cookie',cookie);
             return res.status(HttpStatus.OK).json({
                 cache: {
                     status: redisSet
-                }
+                },
             })
         }else{
             throw new HttpException("FORBIDDEN", HttpStatus.FORBIDDEN)
@@ -153,23 +159,4 @@ export class AuthController {
 
     }
 
-    @Get()
-    findAll() {
-        return this.authService.findAll();
-    }
-
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.authService.findOne(+id);
-    }
-
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-        return this.authService.update(+id, updateAuthDto);
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.authService.remove(+id);
-    }
 }
