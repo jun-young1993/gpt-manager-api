@@ -34,6 +34,10 @@ export default () => ({
         protocol : process.env.APP_PROTOCOL,
         host : process.env.APP_HOST,
         port : process.env.APP_PORT,
+    },
+    jwt : {
+        secret : process.env.JWT_SECRET,
+        expiration_time : process.env.JWT_EXPIRATION_TIME
     }
 } as unknown as {
     db : TypeOrmModuleOptions,
