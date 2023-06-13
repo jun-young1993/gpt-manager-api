@@ -15,17 +15,25 @@ export class UserService {
     return await this.usersRepository.save(createUserDto.toUserEntity());
   }
 
-  async findOne(id:string): Promise<User | null> {
-    const fineOneOptions : FindOneOptions<User> = {
+  async findOne(id : string): Promise<User | null> {
+    
+    const fineOneOptions : FindOneOptions<User> =  {
       where : {id : id}
     }
     return await this.usersRepository.findOne(fineOneOptions);
   }
 
-  async findOneOrFail(id:string) : Promise<User | NotFoundException> {
-    const findUser = await this.findOne(id);
-    if(findUser === null) throw new NotFoundException(`user with id ${id} Not Found`);
-    return findUser;
+  async findOneOrFail(options : FindOneOptions<User> | string) : Promise<User | NotFoundException> {
+    let finduser = null;
+    console.log(options)
+    if(typeof options === 'string'){
+      console.log(options)
+      finduser = await this.findOne(options);
+    }else{
+      finduser = await this.usersRepository.findOne(options as FindOneOptions<User>)
+    }
+    
+    if(finduser === null) throw new NotFoundException(`user with property Not Found`);
+    return finduser;
   }
-
 }
