@@ -16,7 +16,9 @@ export class AuthService {
 		const payload: TokenPayload = { email };
 		const token = await this.jwtService.signAsync(payload);
 		console.log(`Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get<string>('jwt.expiration_time')}`)
+		
 		return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get<string>('jwt.expiration_time')}`;
+
 	}
   
 }

@@ -1,11 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { PassportStrategy } from "@nestjs/passport";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
 
-import { ExtractJwt, Strategy } from "passport-jwt";
-import { UserService } from "src/user/user.service";
-import { Request } from "express";
-import { JwtService } from "@nestjs/jwt";
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { UserService } from 'src/user/user.service';
+import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -16,24 +17,27 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
+          console.log('request?.cookies', request?.cookies);
           return request?.cookies?.Authentication;
         },
       ]),
-      secretOrKey: configService.get('jwt.secret')
+      secretOrKey: configService.get('jwt.secret'),
     });
   }
   // async validate(payload: TokenPayload) {
-	// console.log('validate ',payload);
+  // console.log('validate ',payload);
   //   return true;
   // }
-  async validate(payload: any) : Promise<any>{
-    const {email} = payload;
+  async validate(payload: any): Promise<User | NotFoundException> {
+    const { email } = payload;
     const user = await this.userService.findOneOrFail({
-      where : {
-        email : email
-      }
-    })
-    return user;
+      where: {
+        email: email,
+      },
+    });
+    if (user) {
+      return User.toUserPayload(user as User);
+    }
+    throw new NotFoundException();
   }
-  
 }

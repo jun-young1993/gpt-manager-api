@@ -34,4 +34,13 @@ export class User {
 		user.name  = createDto.name ?? createDto.email;
 		return user;
 	}
+
+	static toUserPayload(userEntity:User) : User {
+		const user = new User();
+		user.id = userEntity.id;
+		user.email = userEntity.email;
+		user.name = userEntity.name;
+		return user;
+	}
+
 }
