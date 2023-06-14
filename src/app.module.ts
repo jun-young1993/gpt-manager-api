@@ -10,6 +10,7 @@ import { UserModule } from './user/user.module';
 import { TypeOrmModule } from "./typeorm/typeorm.module";
 import { JwtModule } from './jwt/jwt.module';
 import { TestModule } from './test/test.module';
+import { GptModule } from './gpt/gpt.module';
 
 
 
@@ -23,6 +24,7 @@ import { TestModule } from './test/test.module';
     UserModule,
     JwtModule,
     TestModule,
+    GptModule,
   ],
   providers: [{
     provide: APP_PIPE,
