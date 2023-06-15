@@ -10,3 +10,13 @@ export class CompletionGptDto {
   @IsArray()
   messages: CreateChatCompletionRequest['messages'];
 }
+
+export class GptCompletionGptDto {
+  @IsOptional()
+  @IsString()
+  model?: string;
+
+  @IsString()
+  prompt : string;
+}
+

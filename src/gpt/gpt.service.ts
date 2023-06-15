@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateGptDto } from './dto/create-gpt.dto';
 import { UpdateGptDto } from './dto/update-gpt.dto';
 import { ConfigService } from '@nestjs/config';
-import { Configuration, CreateChatCompletionRequest, OpenAIApi } from 'openai';
+import {Configuration, CreateChatCompletionRequest, CreateCompletionRequest, OpenAIApi} from 'openai';
 
 @Injectable()
 export class GptService {
@@ -29,6 +29,13 @@ export class GptService {
     const response = await openai.createChatCompletion(
       createChatCompletionRequest,
     );
+    const { data, status } = response;
+    return data;
+  }
+
+  async createCompletion(createCompletionRequest : CreateCompletionRequest){
+    const openai = this.getOpenai();
+    const response = await openai.createCompletion(createCompletionRequest);
     const { data, status } = response;
     return data;
   }
