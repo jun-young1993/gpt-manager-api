@@ -11,6 +11,7 @@ import { TypeOrmModule } from "./typeorm/typeorm.module";
 import { JwtModule } from './jwt/jwt.module';
 import { TestModule } from './test/test.module';
 import { GptModule } from './gpt/gpt.module';
+import { ChatModule } from './chat/chat.module';
 
 
 
@@ -25,6 +26,7 @@ import { GptModule } from './gpt/gpt.module';
     JwtModule,
     TestModule,
     GptModule,
+    ChatModule,
   ],
   providers: [{
     provide: APP_PIPE,
