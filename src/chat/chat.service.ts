@@ -15,9 +15,22 @@ export class ChatService {
 
   createRoom(createRoomDto: CreateRoomDto) {
     const result = this.chatRepository.save(createRoomDto.toChatRoomEntity());
-    console.log(result);
+
     return result;
-    return 'hi';
+
   }
 
+  getNonSyncRooms(){
+    return this.chatRepository.find({
+      where : {
+        sync : false
+      }
+    })
+  }
+
+  updateNonSyncRoom(id : string){
+    return this.chatRepository.update(id,{
+      sync : true
+    })
+  }
 }

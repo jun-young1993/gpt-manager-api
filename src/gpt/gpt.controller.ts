@@ -86,6 +86,8 @@ export class GptController {
 
   @Get('completions/:uuid')
   async getChatUuidCompletion(@Param('uuid') uuid : string){
+    const data = await this.redisService.get(uuid)
+    console.log(data,uuid);
     return JSON.parse(await this.redisService.get(uuid));
   }
 }

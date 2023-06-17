@@ -21,6 +21,9 @@ export class ChatRoom {
   })
   user_id: string;
 
+  @Column({type: "boolean", default : false})
+  sync : boolean
+
   @CreateDateColumn({
     name: 'created_at',
   })

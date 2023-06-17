@@ -12,6 +12,8 @@ import { JwtModule } from './jwt/jwt.module';
 import { TestModule } from './test/test.module';
 import { GptModule } from './gpt/gpt.module';
 import { ChatModule } from './chat/chat.module';
+import { TasksService } from './tasks/tasks.service';
+import { TasksModule } from './tasks/tasks.module';
 
 
 
@@ -27,6 +29,7 @@ import { ChatModule } from './chat/chat.module';
     TestModule,
     GptModule,
     ChatModule,
+    TasksModule,
   ],
   providers: [{
     provide: APP_PIPE,
@@ -35,6 +38,6 @@ import { ChatModule } from './chat/chat.module';
       whitelist: true,
       forbidNonWhitelisted: true,
     })
-  }],
+  }, TasksService],
 })
 export class AppModule {}

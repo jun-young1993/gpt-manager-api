@@ -30,7 +30,7 @@ export default () =>
     redis: {
       host: process.env.REDIS_HOST,
       port: Number(process.env.REDIS_PORT),
-      ttl: Number(300),
+      ttl: process.env.REDIS_TTL ? Number(process.env.REDIS_TTL) : Number(300)
     },
     app: {
       protocol: process.env.APP_PROTOCOL,
