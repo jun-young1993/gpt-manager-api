@@ -23,6 +23,18 @@ export class RedisService {
         await this.redis.flushall();
     }
 
+    async push(key:string,value: any,ttl?: number) : Promise<string|null> {
+        const prev = await this.get(key)
+        if(prev){
+
+            const getRedisValue = JSON.parse(prev);
+            getRedisValue.push(value)
+            return await this.set(key,JSON.stringify(getRedisValue),ttl)
+
+        }
+        return null
+    }
+
     async delete(key: string): Promise<number> {
         return this.redis.del(key);
     }
