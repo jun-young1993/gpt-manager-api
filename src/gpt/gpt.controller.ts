@@ -76,9 +76,12 @@ export class GptController {
     const {role, content} = result.choices[0].message
 
     const replyChates = {
-        id : chates.length+1,
+        order : chates.length+1,
+        uuid,
         content,
-        role
+        role,
+        createdAt : new Date(),
+        updatedAt : new Date()
       };
     await this.redisService.push(uuid, replyChates)
     return replyChates;

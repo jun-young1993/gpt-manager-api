@@ -18,6 +18,7 @@ import { TasksModule } from './tasks/tasks.module';
 
 
 
+
 @Module({
   imports: [
     ConfigModule,
@@ -29,7 +30,7 @@ import { TasksModule } from './tasks/tasks.module';
     TestModule,
     GptModule,
     ChatModule,
-    TasksModule,
+    TasksModule
   ],
   providers: [{
     provide: APP_PIPE,
