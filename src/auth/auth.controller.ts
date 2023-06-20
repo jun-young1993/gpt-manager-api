@@ -39,7 +39,7 @@ export class AuthController {
         const appDomain = this.configService.get<string>('app.domain');
         const appIp = this.configService.get<string>('app.host');
         const loginUrl: string = `${appProtocol}://${appDomain ?? appIp}:${appDomain ? "" : appPort}/v1/auth/login`;
-
+            console.log('login Url',loginUrl);
         const {accepted} = await this.mailService.sendLoginCode(
             mailerOptions,
             email,

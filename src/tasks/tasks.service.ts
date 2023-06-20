@@ -16,7 +16,7 @@ export class TasksService {
     private readonly chatService: ChatService,
   ) {}
 
-  @Cron('* 10 * * * *')
+  @Cron('10 10 11 * * *')
   async syncChat() {
     try {
       console.log(new Date().getMinutes(), new Date().getSeconds());
