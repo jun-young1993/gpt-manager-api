@@ -34,11 +34,11 @@ export class AuthController {
         @Res() res: Response
     ) {
         const mailerOptions = this.configService.get('mailer');
-        const appHost = this.configService.get<string>('app.host');
         const appProtocol = this.configService.get<string>('app.protocol');
         const appPort = this.configService.get<string>('app.port');
+        const appDomain = this.configService.get<string>('app.domain');
 
-        const loginUrl: string = `${appProtocol}://${appHost}:${appPort}/v1/auth/login`;
+        const loginUrl: string = `${appProtocol}://${appDomain}:${appPort}/v1/auth/login`;
 
         const {accepted} = await this.mailService.sendLoginCode(
             mailerOptions,

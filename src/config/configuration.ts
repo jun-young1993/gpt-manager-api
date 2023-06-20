@@ -36,6 +36,7 @@ export default () =>
       protocol: process.env.APP_PROTOCOL,
       host: process.env.APP_HOST,
       port: process.env.APP_PORT,
+      domain: process.env.APP_DOMAIN ?? process.env.APP_HOST,
     },
     jwt: {
       secret: process.env.JWT_SECRET,
