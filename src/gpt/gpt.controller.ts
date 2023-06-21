@@ -71,7 +71,9 @@ export class GptController {
     })
     const result = await this.gptService.createChatCompletion({
       model: model ?? 'gpt-3.5-turbo',
-      messages : [{ "role" : "system", "content": "한국어로 대답해줘" },...chates],
+      messages : [
+        // { "role" : "system", "content": "한국어로 대답해줘" },
+        ...chates],
     } as unknown as CreateChatCompletionRequest);
     const {role, content} = result.choices[0].message
 
