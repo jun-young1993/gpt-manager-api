@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
 import { CreateUserDto } from "../dto/create-user.dto";
 import { v4 as uuid } from "uuid";
+import { guestUser } from "src/config/config";
 
 @Entity('user')
 export class User {
@@ -25,7 +26,11 @@ export class User {
 		name : "updated_at"
 	})
 	updatedAt: Date;
-	    
+	
+	static createGuestUser(): User {
+		const user = new User();
+		return Object.assign(user, guestUser);
+	}
 
 	static createFromDto(createDto : CreateUserDto): User {
 		const user = new User();
