@@ -63,12 +63,15 @@ export class GptController {
       uuid,
     });
     const data:string = await this.redisService.get(uuid)
+    console.log("data",data);
     const chates = JSON.parse(data).map(({role, content}) => {
       return {
         role : role,
         content : content
       }
     })
+
+    console.log('chats',chates);
     const result = await this.gptService.createChatCompletion({
       model: model ?? 'gpt-3.5-turbo',
       messages : [
