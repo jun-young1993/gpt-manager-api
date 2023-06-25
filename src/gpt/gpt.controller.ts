@@ -98,4 +98,9 @@ export class GptController {
     console.log(data,uuid);
     return JSON.parse(await this.redisService.get(uuid));
   }
+
+  @Post('images/generations')
+  async generationsImages(){
+    return await this.gptService.generationsImages();
+  }
 }

@@ -33,6 +33,19 @@ export class GptService {
     return data;
   }
 
+  async generationsImages(){
+    // 256x256, 512x512, or 1024x1024.
+    const openai = this.getOpenai();
+    const response = await openai.createImage({
+      prompt: "제목은 'gptContent' 이고 역할은  ai 이야 마크 만들어줘",
+      n: 2,
+      size: "256x256",
+    })
+
+    const {data, status} = response;
+    return data;
+  }
+
   async createCompletion(createCompletionRequest : CreateCompletionRequest){
     const openai = this.getOpenai();
     const response = await openai.createCompletion(createCompletionRequest);
