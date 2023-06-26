@@ -38,6 +38,24 @@ import * as winstonDaily from 'winston-daily-rotate-file';
           maxSize: '20m',
           maxFiles: '14d',
         }),
+	new winstonDaily({
+		level: 'error',
+		format: winston.format.combine(
+		  winston.format.timestamp({
+		    format: 'YYYY-MM-DD HH:mm:ss',
+		  }),
+		  winston.format.printf(
+		    (info) =>
+		      `[${info.timestamp}] ${process.env.APP_NAME}.${info.level}: ${info.message}`,
+		  ),
+		),
+		dirname: process.env.LOG_DIR,
+		filename: 'error.%DATE%.log',
+		datePattern: 'YYYY-MM-DD',
+		zippedArchive: true,
+		maxSize: '20m',
+		maxFiles: '14d',
+	}),
       ],
     }),
   ],
