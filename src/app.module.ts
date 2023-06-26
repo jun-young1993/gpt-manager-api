@@ -1,4 +1,4 @@
-import { Module, ValidationPipe } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule, ValidationPipe } from "@nestjs/common";
 
 import { APP_PIPE } from "@nestjs/core";
 import { AuthModule } from './auth/auth.module';
@@ -14,8 +14,8 @@ import { GptModule } from './gpt/gpt.module';
 import { ChatModule } from './chat/chat.module';
 import { TasksService } from './tasks/tasks.service';
 import { TasksModule } from './tasks/tasks.module';
-
-
+import { LoggerMiddleware } from "./middlewares/logger.middleware";
+import { LoggerModule } from "./logger/Logger.module";
 
 
 
@@ -30,7 +30,8 @@ import { TasksModule } from './tasks/tasks.module';
     TestModule,
     GptModule,
     ChatModule,
-    TasksModule
+    TasksModule,
+    LoggerModule
   ],
   providers: [{
     provide: APP_PIPE,
@@ -41,4 +42,9 @@ import { TasksModule } from './tasks/tasks.module';
     })
   }, TasksService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
+  
