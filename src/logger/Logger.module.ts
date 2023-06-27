@@ -38,7 +38,7 @@ import * as winstonDaily from 'winston-daily-rotate-file';
           maxSize: '20m',
           maxFiles: '14d',
         }),
-	new winstonDaily({
+        new winstonDaily({
 		level: 'error',
 		format: winston.format.combine(
 		  winston.format.timestamp({

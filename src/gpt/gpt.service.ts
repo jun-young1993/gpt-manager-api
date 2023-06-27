@@ -1,12 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { CreateGptDto } from './dto/create-gpt.dto';
-import { UpdateGptDto } from './dto/update-gpt.dto';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {Configuration, CreateChatCompletionRequest, CreateCompletionRequest, OpenAIApi} from 'openai';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import {
+  Configuration,
+  CreateChatCompletionRequest,
+  CreateCompletionRequest,
+  OpenAIApi,
+} from 'openai';
+import { GenerationImageDto } from './dto/generation-image.dto';
 
 @Injectable()
 export class GptService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async modelList() {
     const openai = this.getOpenai();
@@ -33,20 +41,19 @@ export class GptService {
     return data;
   }
 
-  async generationsImages(){
+  async generationsImages(generationImageDto: GenerationImageDto) {
     // 256x256, 512x512, or 1024x1024.
     const openai = this.getOpenai();
-    const response = await openai.createImage({
-      prompt: "제목은 'gptContent' 이고 역할은  ai 이야 마크 만들어줘",
-      n: 2,
-      size: "256x256",
-    })
+    const response = await openai.createImage(
+      generationImageDto.toCreateImageRequest(),
+    );
 
-    const {data, status} = response;
+    const { data, status } = response;
+    console.log(data, status);
     return data;
   }
 
-  async createCompletion(createCompletionRequest : CreateCompletionRequest){
+  async createCompletion(createCompletionRequest: CreateCompletionRequest) {
     const openai = this.getOpenai();
     const response = await openai.createCompletion(createCompletionRequest);
     const { data, status } = response;
