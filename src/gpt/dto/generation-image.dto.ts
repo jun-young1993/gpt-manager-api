@@ -11,7 +11,10 @@ export class GenerationImageDto {
   @IsEnum(CreateImageRequestSizeEnum)
   size: CreateImageRequest['size'];
 
-  toCreateImageRequest(): CreateImageRequest {
+  toCreateImageRequest(prompt?: string): CreateImageRequest {
+    if (prompt !== undefined) {
+      this.prompt = prompt;
+    }
     return this;
   }
 }

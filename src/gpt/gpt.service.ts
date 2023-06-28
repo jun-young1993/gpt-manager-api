@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import {
@@ -8,6 +8,7 @@ import {
   OpenAIApi,
 } from 'openai';
 import { GenerationImageDto } from './dto/generation-image.dto';
+import { Logger } from 'winston';
 
 @Injectable()
 export class GptService {
@@ -42,10 +43,17 @@ export class GptService {
   }
 
   async generationsImages(generationImageDto: GenerationImageDto) {
+    const completion = await this.createCompletion({
+      model: 'text-davinci-003',
+      prompt: `Translate the sentence '${generationImageDto.prompt}' into English`,
+      max_tokens: 100,
+      temperature: 0,
+    } as CreateCompletionRequest);
+    this.logger.info('[GENERATIONS IMAGES]', completion);
     // 256x256, 512x512, or 1024x1024.
     const openai = this.getOpenai();
     const response = await openai.createImage(
-      generationImageDto.toCreateImageRequest(),
+      generationImageDto.toCreateImageRequest(completion?.choices[0].text),
     );
 
     const { data, status } = response;
