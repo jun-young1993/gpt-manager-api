@@ -34,10 +34,12 @@ export class GptService {
   async createChatCompletion(
     createChatCompletionRequest: CreateChatCompletionRequest,
   ) {
+    console.log('createChatCompletionRequest', createChatCompletionRequest);
     const openai = this.getOpenai();
     const response = await openai.createChatCompletion(
       createChatCompletionRequest,
     );
+    console.log('response', response);
     const { data, status } = response;
     return data;
   }
