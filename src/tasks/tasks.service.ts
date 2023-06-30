@@ -11,7 +11,7 @@ import { ChatCompletionRequestMessage } from 'openai';
 import { CreateGoogleTrendDto } from 'src/google-trends/dto/create-google-trend.dto';
 import { GoogleTrendTypes } from 'src/google-trends/google-trends.interface';
 import sleep from 'src/lib/sleep';
-import moment from 'moment';
+import * as moment from 'moment';
 
 @Injectable()
 export class TasksService {
