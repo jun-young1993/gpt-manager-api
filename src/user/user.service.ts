@@ -9,31 +9,33 @@ import { FindOneOptions, Repository } from 'typeorm';
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly usersRepository : Repository<User>
-  ){}
+    private readonly usersRepository: Repository<User>,
+  ) {}
   async create(createUserDto: CreateUserDto) {
     return await this.usersRepository.save(createUserDto.toUserEntity());
   }
 
-  async findOne(id : string): Promise<User | null> {
-    
-    const fineOneOptions : FindOneOptions<User> =  {
-      where : {id : id}
-    }
+  async findOne(id: string): Promise<User | null> {
+    const fineOneOptions: FindOneOptions<User> = {
+      where: { id: id },
+    };
     return await this.usersRepository.findOne(fineOneOptions);
   }
 
-  async findOneOrFail(options : FindOneOptions<User> | string) : Promise<User | NotFoundException> {
+  async findOneOrFail(
+    options: FindOneOptions<User> | string,
+  ): Promise<User | NotFoundException> {
     let finduser = null;
-    console.log(options)
-    if(typeof options === 'string'){
-      console.log(options)
+    if (typeof options === 'string') {
       finduser = await this.findOne(options);
-    }else{
-      finduser = await this.usersRepository.findOne(options as FindOneOptions<User>)
+    } else {
+      finduser = await this.usersRepository.findOne(
+        options as FindOneOptions<User>,
+      );
     }
-    
-    if(finduser === null) throw new NotFoundException(`user with property Not Found`);
+
+    if (finduser === null)
+      throw new NotFoundException(`user with property Not Found`);
     return finduser;
   }
 }

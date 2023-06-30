@@ -11,12 +11,12 @@ import { TasksController } from './tasks.controller';
 import { GoogleTrendsModule } from 'src/google-trends/google-trends.module';
 import { GoogleTrendsService } from 'src/google-trends/google-trends.service';
 import { GptModule } from 'src/gpt/gpt.module';
+import { GoogleTrend } from 'src/google-trends/entities/google-trend.entity';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    TypeOrmModule.forFeature([ChatRoom]),
-    TypeOrmModule.forFeature([Chat]),
+    TypeOrmModule.forFeature([ChatRoom, Chat]),
     ChatModule,
     GoogleTrendsModule,
     GptModule,

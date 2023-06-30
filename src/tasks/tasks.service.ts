@@ -8,6 +8,9 @@ import { GoogleTrendsService } from 'src/google-trends/google-trends.service';
 import { Logger } from 'winston';
 import { GptService } from 'src/gpt/gpt.service';
 import { ChatCompletionRequestMessage } from 'openai';
+import { CreateGoogleTrendDto } from 'src/google-trends/dto/create-google-trend.dto';
+import { GoogleTrendTypes } from 'src/google-trends/google-trends.interface';
+import sleep from 'src/lib/sleep';
 
 @Injectable()
 export class TasksService {
@@ -53,6 +56,7 @@ export class TasksService {
     }
   }
 
+  @Cron('0 10 * * * *')
   async daily() {
     try {
       const dailyTrends = await this.googleTrendService.daily();
@@ -67,14 +71,14 @@ export class TasksService {
           const systemContent: ChatCompletionRequestMessage[] = [
             {
               role: 'system',
-              content: `${trendTitle}에 대한 기사 url 분석 후 한국어로 정리해줘`,
+              content: `You are an article content analyst. Please explain the analysis in Korean through the article title and URL in detail enough for a 5-year-old child to understand. The article title is '${trendTitle}'.`,
             },
           ];
           // trendingSearch.articles.forEach((articles) => {
           for (const articles of trendingSearch.articles) {
             systemContent.push({
               role: 'user',
-              content: `기사제목: ${articles.title}, url: ${articles.url}`,
+              content: `The article title is '${articles.title}' and the url is '${articles.url}'`,
             } as ChatCompletionRequestMessage);
           }
 
@@ -85,10 +89,28 @@ export class TasksService {
             messages: systemContent,
           });
 
-          this.logger.info(result);
+          this.logger.info(JSON.stringify(result));
           const { content } = result.choices[0].message;
           this.logger.info(content);
-          // });
+
+          const createGoogleTrendDto = new CreateGoogleTrendDto();
+
+          const googleTrendEntity = await this.googleTrendService.create(
+            Object.assign(createGoogleTrendDto, {
+              title: trendTitle,
+              articleContent: content,
+              type: GoogleTrendTypes.DAILY,
+            }),
+          );
+
+          this.logger.info(
+            '[tasks.service.ts(googleTrendEntity)]',
+            googleTrendEntity,
+          );
+
+          this.logger.info('before sleep');
+          await sleep(10000);
+          this.logger.info('after sleep');
         }
       }
       return dailyTrends;
