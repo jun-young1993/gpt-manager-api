@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import * as googleTrends from 'google-trends-api';
 import * as moment from 'moment';
-import GoogleTrendsDailyInterface, { GoogleTrendFindOption } from './google-trends.interface';
+import GoogleTrendsDailyInterface, {
+  GoogleTrendFindOption,
+} from './google-trends.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GoogleTrend } from './entities/google-trend.entity';
-import { Between, FindManyOptions, Repository } from 'typeorm';
+import {
+  Between,
+  FindManyOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { CreateGoogleTrendDto } from './dto/create-google-trend.dto';
+import { IS_DELETED } from 'src/typeorm/typeorm.interface';
 @Injectable()
 export class GoogleTrendsService {
   constructor(
@@ -43,11 +51,13 @@ export class GoogleTrendsService {
     end_date,
     title,
     article_content,
+    type,
   }: GoogleTrendFindOption): FindManyOptions<GoogleTrend> {
     return {
       where: {
         ...(title ? { title: title } : {}),
         ...(article_content ? { articleContent: article_content } : {}),
+        ...(type ? { type: type } : {}),
         ...(start_date && end_date
           ? {
               createdAt: Between(
@@ -63,6 +73,15 @@ export class GoogleTrendsService {
   async find(options: GoogleTrendFindOption) {
     return await this.googleTrendRepository.find(
       this.findManyOptionParse(options),
+    );
+  }
+
+  async delete(options: GoogleTrendFindOption) {
+    return await this.googleTrendRepository.update(
+      this.findManyOptionParse(options).where as FindOptionsWhere<GoogleTrend>,
+      {
+        isDeleted: IS_DELETED.Y,
+      },
     );
   }
 }

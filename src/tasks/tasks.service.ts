@@ -11,6 +11,7 @@ import { ChatCompletionRequestMessage } from 'openai';
 import { CreateGoogleTrendDto } from 'src/google-trends/dto/create-google-trend.dto';
 import { GoogleTrendTypes } from 'src/google-trends/google-trends.interface';
 import sleep from 'src/lib/sleep';
+import moment from 'moment';
 
 @Injectable()
 export class TasksService {
@@ -94,7 +95,16 @@ export class TasksService {
           this.logger.info(content);
 
           const createGoogleTrendDto = new CreateGoogleTrendDto();
-
+          const deletedGoogleTrend = await this.googleTrendService.delete({
+            start_date: moment().format('YYYY-MM-DD'),
+            end_date: moment().format('YYYY-MM-DD'),
+            title: trendTitle,
+            type: GoogleTrendTypes.DAILY,
+          });
+          this.logger.info(
+            '[tasks.service.ts(deletedGoogleTrend)]',
+            deletedGoogleTrend,
+          );
           const googleTrendEntity = await this.googleTrendService.create(
             Object.assign(createGoogleTrendDto, {
               title: trendTitle,
@@ -107,10 +117,7 @@ export class TasksService {
             '[tasks.service.ts(googleTrendEntity)]',
             googleTrendEntity,
           );
-
-          this.logger.info('before sleep');
           await sleep(10000);
-          this.logger.info('after sleep');
         }
       }
       return dailyTrends;

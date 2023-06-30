@@ -30,6 +30,7 @@ export interface GoogleTrendFindOption {
   end_date?: string;
   title?: string;
   article_content?: string;
+  type?: GoogleTrendTypes;
 }
 
 export enum GoogleTrendTypes {

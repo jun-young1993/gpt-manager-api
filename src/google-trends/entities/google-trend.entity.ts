@@ -7,6 +7,8 @@ import {
 } from 'typeorm';
 import { CreateGoogleTrendDto } from '../dto/create-google-trend.dto';
 import { v4 as uuid } from 'uuid';
+import { IsEnum } from 'class-validator';
+import { IS_DELETED } from 'src/typeorm/typeorm.interface';
 
 @Entity('google_trend')
 export class GoogleTrend {
@@ -27,6 +29,15 @@ export class GoogleTrend {
     name: 'article_content',
   })
   articleContent: string;
+
+  @Column({
+    name: 'is_deleted',
+    type: 'varchar',
+    length: 1,
+    default: IS_DELETED.N,
+  })
+  @IsEnum(IS_DELETED)
+  public isDeleted: IS_DELETED;
 
   @CreateDateColumn({
     name: 'created_at',
