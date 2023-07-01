@@ -1,19 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import * as googleTrends from 'google-trends-api';
 import * as moment from 'moment';
-import GoogleTrendsDailyInterface, {
-  GoogleTrendFindOption,
-} from './google-trends.interface';
-import { InjectRepository } from '@nestjs/typeorm';
-import { GoogleTrend } from './entities/google-trend.entity';
-import {
-  Between,
-  FindManyOptions,
-  FindOptionsWhere,
-  Repository,
-} from 'typeorm';
-import { CreateGoogleTrendDto } from './dto/create-google-trend.dto';
-import { IS_DELETED } from 'src/typeorm/typeorm.interface';
+import GoogleTrendsDailyInterface, {GoogleTrendFindOption,} from './google-trends.interface';
+import {InjectRepository} from '@nestjs/typeorm';
+import {GoogleTrend} from './entities/google-trend.entity';
+import {Between, FindManyOptions, FindOptionsWhere, Repository,} from 'typeorm';
+import {CreateGoogleTrendDto} from './dto/create-google-trend.dto';
+import {IS_DELETED} from 'src/typeorm/typeorm.interface';
+
 @Injectable()
 export class GoogleTrendsService {
   constructor(
@@ -55,6 +49,7 @@ export class GoogleTrendsService {
   }: GoogleTrendFindOption): FindManyOptions<GoogleTrend> {
     return {
       where: {
+        isDeleted: IS_DELETED.N,
         ...(title ? { title: title } : {}),
         ...(article_content ? { articleContent: article_content } : {}),
         ...(type ? { type: type } : {}),
