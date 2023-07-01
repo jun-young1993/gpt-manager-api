@@ -133,3 +133,5 @@ dist
 
 
 storage/*
+
+public/sitemap.xml
