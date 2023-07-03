@@ -9,7 +9,7 @@ import { Logger } from 'winston';
 import { GptService } from 'src/gpt/gpt.service';
 import { ChatCompletionRequestMessage } from 'openai';
 import { CreateGoogleTrendDto } from 'src/google-trends/dto/create-google-trend.dto';
-import { GoogleTrendTypes } from 'src/google-trends/google-trends.interface';
+import {GoogleGeoCode, GooGleTrendGeos, GoogleTrendTypes} from 'src/google-trends/google-trends.interface';
 import sleep from 'src/lib/sleep';
 import * as moment from 'moment';
 
@@ -59,68 +59,74 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_4_HOURS)
   async daily() {
+
     try {
-      const dailyTrends = await this.googleTrendService.daily();
-      const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
+      for (const [key, geo] of Object.entries(GooGleTrendGeos)) {
 
-      // trendingSearchDays.forEach(async (trendingSearchDay) => {
-      for (const trendingSearchDay of trendingSearchDays) {
-        this.logger.info('[Trend Searching...]');
-        // trendingSearchDay.trendingSearches.forEach(async (trendingSearch) => {
-        for (const trendingSearch of trendingSearchDay.trendingSearches) {
-          const trendTitle = trendingSearch.title.query;
-          const systemContent: ChatCompletionRequestMessage[] = [
-            {
-              role: 'system',
-              content: `You are an article content analyst. Please explain the analysis in Korean through the article title and URL in detail enough for a 5-year-old child to understand. The article title is '${trendTitle}'.`,
-            },
-          ];
-          // trendingSearch.articles.forEach((articles) => {
-          for (const articles of trendingSearch.articles) {
-            systemContent.push({
-              role: 'user',
-              content: `The article title is '${articles.title}' and the url is '${articles.url}'`,
-            } as ChatCompletionRequestMessage);
-          }
+        const dailyTrends = await this.googleTrendService.daily(geo);
+        const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
 
-          this.logger.info(JSON.stringify(systemContent));
+        // trendingSearchDays.forEach(async (trendingSearchDay) => {
+        for (const trendingSearchDay of trendingSearchDays) {
+          this.logger.info('[Trend Searching...]');
+          // trendingSearchDay.trendingSearches.forEach(async (trendingSearch) => {
+          for (const trendingSearch of trendingSearchDay.trendingSearches) {
+            const trendTitle = trendingSearch.title.query;
+            const systemContent: ChatCompletionRequestMessage[] = [
+              {
+                role: 'system',
+                content: `You are an article content analyst. Please explain the analysis in Korean through the article title and URL in detail enough for a 5-year-old child to understand. The article title is '${trendTitle}'.`,
+              },
+            ];
+            // trendingSearch.articles.forEach((articles) => {
+            for (const articles of trendingSearch.articles) {
+              systemContent.push({
+                role: 'user',
+                content: `The article title is '${articles.title}' and the url is '${articles.url}'`,
+              } as ChatCompletionRequestMessage);
+            }
 
-          const result = await this.gptService.createChatCompletion({
-            model: 'gpt-3.5-turbo',
-            messages: systemContent,
-          });
+            this.logger.info(JSON.stringify(systemContent));
 
-          this.logger.info(JSON.stringify(result));
-          const { content } = result.choices[0].message;
-          this.logger.info(content);
+            const result = await this.gptService.createChatCompletion({
+              model: 'gpt-3.5-turbo',
+              messages: systemContent,
+            });
 
-          const createGoogleTrendDto = new CreateGoogleTrendDto();
-          const deletedGoogleTrend = await this.googleTrendService.delete({
-            start_date: moment().format('YYYY-MM-DD'),
-            end_date: moment().format('YYYY-MM-DD'),
-            title: trendTitle,
-            type: GoogleTrendTypes.DAILY,
-          });
-          this.logger.info(
-            '[tasks.service.ts(deletedGoogleTrend)]',
-            deletedGoogleTrend,
-          );
-          const googleTrendEntity = await this.googleTrendService.create(
-            Object.assign(createGoogleTrendDto, {
+            this.logger.info(JSON.stringify(result));
+            const { content } = result.choices[0].message;
+            this.logger.info(content);
+
+            const createGoogleTrendDto = new CreateGoogleTrendDto();
+            const deletedGoogleTrend = await this.googleTrendService.delete({
+              start_date: moment().format('YYYY-MM-DD'),
+              end_date: moment().format('YYYY-MM-DD'),
               title: trendTitle,
-              articleContent: content,
               type: GoogleTrendTypes.DAILY,
-            }),
-          );
+            });
+            this.logger.info(
+                '[tasks.service.ts(deletedGoogleTrend)]',
+                deletedGoogleTrend,
+            );
+            const googleTrendEntity = await this.googleTrendService.create(
+                Object.assign(createGoogleTrendDto, {
+                  title: trendTitle,
+                  articleContent: content,
+                  type: GoogleTrendTypes.DAILY,
+                  geo: geo
+                }),
+            );
 
-          this.logger.info(
-            '[tasks.service.ts(googleTrendEntity)]',
-            googleTrendEntity,
-          );
-          await sleep(10000);
+            this.logger.info(
+                '[tasks.service.ts(googleTrendEntity)]',
+                googleTrendEntity,
+            );
+            await sleep(10000);
+          }
         }
       }
-      return dailyTrends;
+
+      return true;
     } catch (e) {
       this.logger.error('[TASK DAILY EXCEPTION]', e);
     }
