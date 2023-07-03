@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import {Cron, CronExpression} from '@nestjs/schedule';
 import { RedisService } from '../redis/redis.service';
 import { ChatService } from '../chat/chat.service';
 import { CreateChatDto } from 'src/chat/dto/create-chat.dto';
@@ -57,7 +57,7 @@ export class TasksService {
     }
   }
 
-  @Cron('0 10 * * * *')
+  @Cron(CronExpression.EVERY_4_HOURS)
   async daily() {
     try {
       const dailyTrends = await this.googleTrendService.daily();
