@@ -1,7 +1,11 @@
 import {Injectable} from '@nestjs/common';
 import * as googleTrends from 'google-trends-api';
 import * as moment from 'moment';
-import GoogleTrendsDailyInterface, {GoogleTrendFindOption, GooGleTrendGeos,} from './google-trends.interface';
+import GoogleTrendsDailyInterface, {
+  GoogleGeoCode,
+  GoogleTrendFindOption,
+  GooGleTrendGeos,
+} from './google-trends.interface';
 import {InjectRepository} from '@nestjs/typeorm';
 import {GoogleTrend} from './entities/google-trend.entity';
 import {Between, FindManyOptions, FindOptionsWhere, Repository,} from 'typeorm';
@@ -14,7 +18,7 @@ export class GoogleTrendsService {
     @InjectRepository(GoogleTrend)
     private readonly googleTrendRepository: Repository<GoogleTrend>,
   ) {}
-  async daily(geo ): Promise<GoogleTrendsDailyInterface> {
+  async daily(geo : GoogleGeoCode): Promise<GoogleTrendsDailyInterface> {
     return new Promise(function (resolve, reject) {
       googleTrends.dailyTrends(
         {

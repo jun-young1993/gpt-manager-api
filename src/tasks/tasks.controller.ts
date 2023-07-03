@@ -1,6 +1,7 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import {Controller, Get, Param, Req} from '@nestjs/common';
 
 import { TasksService } from 'src/tasks/tasks.service';
+import {GoogleGeoCode} from "../google-trends/google-trends.interface";
 
 @Controller('tasks')
 export class TasksController {
