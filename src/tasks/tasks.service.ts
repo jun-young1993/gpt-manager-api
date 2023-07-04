@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {Cron, CronExpression} from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { RedisService } from '../redis/redis.service';
 import { ChatService } from '../chat/chat.service';
 import { CreateChatDto } from 'src/chat/dto/create-chat.dto';
@@ -9,7 +9,11 @@ import { Logger } from 'winston';
 import { GptService } from 'src/gpt/gpt.service';
 import { ChatCompletionRequestMessage } from 'openai';
 import { CreateGoogleTrendDto } from 'src/google-trends/dto/create-google-trend.dto';
-import {GoogleGeoCode, GooGleTrendGeos, GoogleTrendTypes} from 'src/google-trends/google-trends.interface';
+import {
+  GoogleGeoCode,
+  GooGleTrendGeos,
+  GoogleTrendTypes,
+} from 'src/google-trends/google-trends.interface';
 import sleep from 'src/lib/sleep';
 import * as moment from 'moment';
 
@@ -59,10 +63,8 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_4_HOURS)
   async daily() {
-
     try {
-      for (const [key, geo] of Object.entries(GooGleTrendGeos)) {
-
+      for (const [_, geo] of Object.entries(GooGleTrendGeos)) {
         const dailyTrends = await this.googleTrendService.daily(geo);
         const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
 
@@ -72,6 +74,24 @@ export class TasksService {
           // trendingSearchDay.trendingSearches.forEach(async (trendingSearch) => {
           for (const trendingSearch of trendingSearchDay.trendingSearches) {
             const trendTitle = trendingSearch.title.query;
+            const getGoogleTrend = await this.googleTrendService.findOne({
+              start_date: moment().format('YYYY-MM-DD'),
+              end_date: moment().format('YYYY-MM-DD'),
+              title: trendTitle,
+              type: GoogleTrendTypes.DAILY,
+              geo: geo,
+            });
+            this.logger.info(
+              '[tasks.service.ts(getGoogleTrend)]',
+              getGoogleTrend,
+            );
+            if (getGoogleTrend === null) {
+              this.logger.info(
+                '[tasks.service.ts(getGoogleTrend)]',
+                'continue',
+              );
+              continue;
+            }
             const systemContent: ChatCompletionRequestMessage[] = [
               {
                 role: 'system',
@@ -98,28 +118,19 @@ export class TasksService {
             this.logger.info(content);
 
             const createGoogleTrendDto = new CreateGoogleTrendDto();
-            const deletedGoogleTrend = await this.googleTrendService.delete({
-              start_date: moment().format('YYYY-MM-DD'),
-              end_date: moment().format('YYYY-MM-DD'),
-              title: trendTitle,
-              type: GoogleTrendTypes.DAILY,
-            });
-            this.logger.info(
-                '[tasks.service.ts(deletedGoogleTrend)]',
-                deletedGoogleTrend,
-            );
+
             const googleTrendEntity = await this.googleTrendService.create(
-                Object.assign(createGoogleTrendDto, {
-                  title: trendTitle,
-                  articleContent: content,
-                  type: GoogleTrendTypes.DAILY,
-                  geo: geo
-                }),
+              Object.assign(createGoogleTrendDto, {
+                title: trendTitle,
+                articleContent: content,
+                type: GoogleTrendTypes.DAILY,
+                geo: geo,
+              }),
             );
 
             this.logger.info(
-                '[tasks.service.ts(googleTrendEntity)]',
-                googleTrendEntity,
+              '[tasks.service.ts(googleTrendEntity)]',
+              googleTrendEntity,
             );
             await sleep(10000);
           }

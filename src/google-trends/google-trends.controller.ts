@@ -26,7 +26,7 @@ export class GoogleTrendsController {
 
   @Get('daily/:geo')
   async daily(@Param('geo') geo: GoogleGeoCode) {
-    console.log('geo',geo)
+    console.log('geo', geo);
     return await this.googleTrendsService.daily(geo);
   }
 

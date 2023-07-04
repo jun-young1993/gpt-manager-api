@@ -9,6 +9,7 @@ import { CreateGoogleTrendDto } from '../dto/create-google-trend.dto';
 import { v4 as uuid } from 'uuid';
 import { IsEnum } from 'class-validator';
 import { IS_DELETED } from 'src/typeorm/typeorm.interface';
+import { GooGleTrendGeos } from '../google-trends.interface';
 
 @Entity('google_trend')
 export class GoogleTrend {
@@ -38,6 +39,13 @@ export class GoogleTrend {
   })
   @IsEnum(IS_DELETED)
   public isDeleted: IS_DELETED;
+
+  @Column({
+    type: 'varchar',
+    length: 5,
+    default: GooGleTrendGeos.KR,
+  })
+  public geo: string;
 
   @CreateDateColumn({
     name: 'created_at',

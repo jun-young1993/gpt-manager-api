@@ -31,6 +31,7 @@ export interface GoogleTrendFindOption {
   title?: string;
   article_content?: string;
   type?: GoogleTrendTypes;
+  geo?: GoogleGeoCode;
 }
 
 export enum GoogleTrendTypes {
@@ -47,8 +48,9 @@ export enum GoogleTrendTypes {
 // 이탈리아: IT (이탈리아)
 // 호주: AU (호주)
 export const GooGleTrendGeos = {
-  KR : "KR",
-  US : "US"
+  KR: 'KR',
+  US: 'US',
 } as const;
 
-export type GoogleGeoCode = typeof GooGleTrendGeos[keyof typeof GooGleTrendGeos];
+export type GoogleGeoCode =
+  (typeof GooGleTrendGeos)[keyof typeof GooGleTrendGeos];

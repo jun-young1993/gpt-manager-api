@@ -75,6 +75,12 @@ export class GoogleTrendsService {
     );
   }
 
+  async findOne(options: GoogleTrendFindOption){
+    return await this.googleTrendRepository.findOne(
+      this.findManyOptionParse(options),
+    );
+  }
+
   async delete(options: GoogleTrendFindOption) {
     return await this.googleTrendRepository.update(
       this.findManyOptionParse(options).where as FindOptionsWhere<GoogleTrend>,
