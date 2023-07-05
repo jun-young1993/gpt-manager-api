@@ -36,7 +36,7 @@ export class GoogleTrendsMapping {
 
   @Column({
     type: 'varchar',
-    length: 1,
+    length: 8,
   })
   public date: string;
 

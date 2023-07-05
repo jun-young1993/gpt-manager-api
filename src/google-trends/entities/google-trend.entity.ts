@@ -20,10 +20,10 @@ export class GoogleTrend {
   id: string;
 
   @Column()
-  public type: string;
+  title: string;
 
   @Column()
-  public title: string;
+  url: string;
 
   @Column({
     type: 'text',
@@ -39,13 +39,6 @@ export class GoogleTrend {
   })
   @IsEnum(IS_DELETED)
   public isDeleted: IS_DELETED;
-
-  @Column({
-    type: 'varchar',
-    length: 5,
-    default: GooGleTrendGeos.KR,
-  })
-  public geo: string;
 
   @CreateDateColumn({
     name: 'created_at',

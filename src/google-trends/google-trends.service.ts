@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { GoogleTrend } from './entities/google-trend.entity';
 import {
   Between,
-  FindManyOptions,
+  FindManyOptions, FindOneOptions,
   FindOptionsWhere,
   Repository,
 } from 'typeorm';
@@ -50,6 +50,10 @@ export class GoogleTrendsService {
     return await this.googleTrendRepository.save(
       createGoogleTrendDto.toGoogleTrendEntity(),
     );
+  }
+
+  async getOne(options: FindOneOptions): Promise<GoogleTrend>{
+    return await this.googleTrendRepository.findOne(options);
   }
 
   findManyOptionParse({

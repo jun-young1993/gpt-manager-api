@@ -74,100 +74,110 @@ export class TasksService {
         for (const trendingSearchDay of trendingSearchDays) {
           const trendingSearchDayDate = trendingSearchDay.date;
           for (const trendingSearch of trendingSearchDay.trendingSearches) {
-            const mappingData = {
+
+            const googleTrendsMapping = await this.googleTrendsMappingService.findOrCreate({
               isDeleted: IS_DELETED.N,
               geo: geo,
               date: trendingSearchDayDate,
               title: trendingSearch.title.query,
-            };
-            const findGoogleTrendsMapping =
-              await this.googleTrendsMappingService.findOne({
-                where: mappingData,
-              });
-            if (findGoogleTrendsMapping === null) {
-              const googleTrendMappingEntity =
-                new CreateGoogleTrendsMappingDto();
+            })
+            for(const articles of trendingSearch.articles){
+              const {title, url} = articles;
+              const googleTrend = await this.googleTrendService.getOne({
+                where: {
+                  id: googleTrendsMapping.id
+                }
+              })
 
-              await this.googleTrendsMappingService.create(
-                Object.assign(googleTrendMappingEntity, mappingData),
-              );
+              if(googleTrend === null){
+                const googleTrendDto = new CreateGoogleTrendDto();
+                await this.googleTrendService.create(
+                    Object.assign(googleTrendDto, {
+                      id: googleTrendsMapping.id,
+                      title: title,
+                      url: url,
+                      articleContent: ''
+                    })
+                )
+              }
             }
+
           }
         }
       }
-
-      for (const [_, geo] of Object.entries(GooGleTrendGeos)) {
-        const dailyTrends = await this.googleTrendService.daily(geo);
-        const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
-
-        // trendingSearchDays.forEach(async (trendingSearchDay) => {
-        for (const trendingSearchDay of trendingSearchDays) {
-          this.logger.info('[Trend Searching...]');
-          // trendingSearchDay.trendingSearches.forEach(async (trendingSearch) => {
-          for (const trendingSearch of trendingSearchDay.trendingSearches) {
-            const trendTitle = trendingSearch.title.query;
-            const getGoogleTrend = await this.googleTrendService.findOne({
-              start_date: moment().format('YYYY-MM-DD'),
-              end_date: moment().format('YYYY-MM-DD'),
-              title: trendTitle,
-              type: GoogleTrendTypes.DAILY,
-              geo: geo,
-            });
-            this.logger.info(
-              '[tasks.service.ts(getGoogleTrend)]',
-              getGoogleTrend,
-            );
-            if (getGoogleTrend === null) {
-              this.logger.info(
-                '[tasks.service.ts(getGoogleTrend)]',
-                'continue',
-              );
-              continue;
-            }
-            const systemContent: ChatCompletionRequestMessage[] = [
-              {
-                role: 'system',
-                content: `You are an article content analyst. Please explain the analysis in Korean through the article title and URL in detail enough for a 5-year-old child to understand. The article title is '${trendTitle}'.`,
-              },
-            ];
-            // trendingSearch.articles.forEach((articles) => {
-            for (const articles of trendingSearch.articles) {
-              systemContent.push({
-                role: 'user',
-                content: `The article title is '${articles.title}' and the url is '${articles.url}'`,
-              } as ChatCompletionRequestMessage);
-            }
-
-            this.logger.info(JSON.stringify(systemContent));
-
-            const result = await this.gptService.createChatCompletion({
-              model: 'gpt-3.5-turbo',
-              messages: systemContent,
-            });
-
-            this.logger.info(JSON.stringify(result));
-            const { content } = result.choices[0].message;
-            this.logger.info(content);
-
-            const createGoogleTrendDto = new CreateGoogleTrendDto();
-
-            const googleTrendEntity = await this.googleTrendService.create(
-              Object.assign(createGoogleTrendDto, {
-                title: trendTitle,
-                articleContent: content,
-                type: GoogleTrendTypes.DAILY,
-                geo: geo,
-              }),
-            );
-
-            this.logger.info(
-              '[tasks.service.ts(googleTrendEntity)]',
-              googleTrendEntity,
-            );
-            await sleep(10000);
-          }
-        }
-      }
+      //
+      // for (const [_, geo] of Object.entries(GooGleTrendGeos)) {
+      //   const dailyTrends = await this.googleTrendService.daily(geo);
+      //   const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
+      //
+      //   // trendingSearchDays.forEach(async (trendingSearchDay) => {
+      //   for (const trendingSearchDay of trendingSearchDays) {
+      //     this.logger.info('[Trend Searching...]');
+      //     // trendingSearchDay.trendingSearches.forEach(async (trendingSearch) => {
+      //     for (const trendingSearch of trendingSearchDay.trendingSearches) {
+      //       const trendTitle = trendingSearch.title.query;
+      //       const getGoogleTrend = await this.googleTrendService.findOne({
+      //         start_date: moment().format('YYYY-MM-DD'),
+      //         end_date: moment().format('YYYY-MM-DD'),
+      //         title: trendTitle,
+      //         type: GoogleTrendTypes.DAILY,
+      //         geo: geo,
+      //       });
+      //       this.logger.info(
+      //         '[tasks.service.ts(getGoogleTrend)]',
+      //         getGoogleTrend,
+      //       );
+      //       if (getGoogleTrend === null) {
+      //         this.logger.info(
+      //           '[tasks.service.ts(getGoogleTrend)]',
+      //           'continue',
+      //         );
+      //         continue;
+      //       }
+      //       const systemContent: ChatCompletionRequestMessage[] = [
+      //         {
+      //           role: 'system',
+      //           content: `You are an article content analyst. Please explain the analysis in Korean through the article title and URL in detail enough for a 5-year-old child to understand. The article title is '${trendTitle}'.`,
+      //         },
+      //       ];
+      //       // trendingSearch.articles.forEach((articles) => {
+      //       for (const articles of trendingSearch.articles) {
+      //         systemContent.push({
+      //           role: 'user',
+      //           content: `The article title is '${articles.title}' and the url is '${articles.url}'`,
+      //         } as ChatCompletionRequestMessage);
+      //       }
+      //
+      //       this.logger.info(JSON.stringify(systemContent));
+      //
+      //       const result = await this.gptService.createChatCompletion({
+      //         model: 'gpt-3.5-turbo',
+      //         messages: systemContent,
+      //       });
+      //
+      //       this.logger.info(JSON.stringify(result));
+      //       const { content } = result.choices[0].message;
+      //       this.logger.info(content);
+      //
+      //       const createGoogleTrendDto = new CreateGoogleTrendDto();
+      //
+      //       const googleTrendEntity = await this.googleTrendService.create(
+      //         Object.assign(createGoogleTrendDto, {
+      //           title: trendTitle,
+      //           articleContent: content,
+      //           type: GoogleTrendTypes.DAILY,
+      //           geo: geo,
+      //         }),
+      //       );
+      //
+      //       this.logger.info(
+      //         '[tasks.service.ts(googleTrendEntity)]',
+      //         googleTrendEntity,
+      //       );
+      //       await sleep(10000);
+      //     }
+      //   }
+      // }
 
       return true;
     } catch (e) {

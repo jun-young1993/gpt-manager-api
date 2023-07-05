@@ -22,4 +22,21 @@ export class GoogleTrendsMappingService {
   async findOne(options: FindOneOptions) {
     return await this.googleTrendsMappingRepository.findOne(options);
   }
+
+  async findOrCreate(options: FindOneOptions['where']) {
+    let googleTrendsMapping =
+        await this.findOne({
+          where: options,
+        });
+    if (googleTrendsMapping === null) {
+      const googleTrendMappingDto =
+          new CreateGoogleTrendsMappingDto();
+
+      return await this.create(
+          Object.assign(googleTrendMappingDto, options),
+      );
+    }
+
+    return googleTrendsMapping;
+  }
 }
