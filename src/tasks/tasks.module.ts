@@ -11,7 +11,7 @@ import { TasksController } from './tasks.controller';
 import { GoogleTrendsModule } from 'src/google-trends/google-trends.module';
 import { GoogleTrendsService } from 'src/google-trends/google-trends.service';
 import { GptModule } from 'src/gpt/gpt.module';
-import { GoogleTrend } from 'src/google-trends/entities/google-trend.entity';
+import { GoogleTrendsMappingModule } from 'src/google-trends-mapping/google-trends-mapping.module';
 
 @Module({
   imports: [
@@ -19,6 +19,7 @@ import { GoogleTrend } from 'src/google-trends/entities/google-trend.entity';
     TypeOrmModule.forFeature([ChatRoom, Chat]),
     ChatModule,
     GoogleTrendsModule,
+    GoogleTrendsMappingModule,
     GptModule,
   ],
   controllers: [TasksController],

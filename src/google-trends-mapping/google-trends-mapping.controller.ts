@@ -5,30 +5,13 @@ import { UpdateGoogleTrendsMappingDto } from './dto/update-google-trends-mapping
 
 @Controller('google-trends-mapping')
 export class GoogleTrendsMappingController {
-  constructor(private readonly googleTrendsMappingService: GoogleTrendsMappingService) {}
+  constructor(
+    private readonly googleTrendsMappingService: GoogleTrendsMappingService,
+  ) {}
 
   @Post()
-  create(@Body() createGoogleTrendsMappingDto: CreateGoogleTrendsMappingDto) {
+  async create(@Body() createGoogleTrendsMappingDto: CreateGoogleTrendsMappingDto) {
     return this.googleTrendsMappingService.create(createGoogleTrendsMappingDto);
   }
 
-  @Get()
-  findAll() {
-    return this.googleTrendsMappingService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.googleTrendsMappingService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGoogleTrendsMappingDto: UpdateGoogleTrendsMappingDto) {
-    return this.googleTrendsMappingService.update(+id, updateGoogleTrendsMappingDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.googleTrendsMappingService.remove(+id);
-  }
 }

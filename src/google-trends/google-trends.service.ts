@@ -27,9 +27,10 @@ export class GoogleTrendsService {
     date?: string,
   ): Promise<GoogleTrendsDailyInterface> {
     return new Promise(function (resolve, reject) {
+
       googleTrends.dailyTrends(
         {
-          trendDate: date === undefined ? moment().format('YYYY-MM-DD') : date,
+          trendDate: date ?? moment().format('YYYY-MM-DD'),
           geo: geo,
         },
         function (err, results) {

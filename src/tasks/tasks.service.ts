@@ -16,6 +16,9 @@ import {
 } from 'src/google-trends/google-trends.interface';
 import sleep from 'src/lib/sleep';
 import * as moment from 'moment';
+import { GoogleTrendsMappingService } from 'src/google-trends-mapping/google-trends-mapping.service';
+import { IS_DELETED } from 'src/typeorm/typeorm.interface';
+import { CreateGoogleTrendsMappingDto } from 'src/google-trends-mapping/dto/create-google-trends-mapping.dto';
 
 @Injectable()
 export class TasksService {
@@ -23,6 +26,7 @@ export class TasksService {
     private readonly redisService: RedisService,
     private readonly chatService: ChatService,
     private readonly googleTrendService: GoogleTrendsService,
+    private readonly googleTrendsMappingService: GoogleTrendsMappingService,
     private readonly gptService: GptService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -64,6 +68,34 @@ export class TasksService {
   @Cron(CronExpression.EVERY_4_HOURS)
   async daily() {
     try {
+      for (const [_, geo] of Object.entries(GooGleTrendGeos)) {
+        const dailyTrends = await this.googleTrendService.daily(geo);
+        const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
+        for (const trendingSearchDay of trendingSearchDays) {
+          const trendingSearchDayDate = trendingSearchDay.date;
+          for (const trendingSearch of trendingSearchDay.trendingSearches) {
+            const mappingData = {
+              isDeleted: IS_DELETED.N,
+              geo: geo,
+              date: trendingSearchDayDate,
+              title: trendingSearch.title.query,
+            };
+            const findGoogleTrendsMapping =
+              await this.googleTrendsMappingService.findOne({
+                where: mappingData,
+              });
+            if (findGoogleTrendsMapping === null) {
+              const googleTrendMappingEntity =
+                new CreateGoogleTrendsMappingDto();
+
+              await this.googleTrendsMappingService.create(
+                Object.assign(googleTrendMappingEntity, mappingData),
+              );
+            }
+          }
+        }
+      }
+
       for (const [_, geo] of Object.entries(GooGleTrendGeos)) {
         const dailyTrends = await this.googleTrendService.daily(geo);
         const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
