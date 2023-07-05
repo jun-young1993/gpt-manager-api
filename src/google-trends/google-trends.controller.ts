@@ -1,23 +1,14 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { GoogleTrendsService } from './google-trends.service';
 import { CreateGoogleTrendDto } from './dto/create-google-trend.dto';
-import { UpdateGoogleTrendDto } from './dto/update-google-trend.dto';
-import { Between } from 'typeorm';
-import {GoogleGeoCode, GoogleTrendFindOption} from './google-trends.interface';
+import {
+  GoogleGeoCode,
+  GoogleTrendFindOption,
+} from './google-trends.interface';
 
 @Controller('google-trends')
 export class GoogleTrendsController {
   constructor(private readonly googleTrendsService: GoogleTrendsService) {}
-
 
   @Get('')
   async find(@Query() query: GoogleTrendFindOption) {
@@ -30,10 +21,22 @@ export class GoogleTrendsController {
     return await this.googleTrendsService.daily(geo);
   }
 
+  @Get('daily/:geo/:date')
+  async dailyByDate(
+    @Param('geo') geo: GoogleGeoCode,
+    @Param('date') date: string,
+  ) {
+    console.log('daily/:geo/:date', geo, date);
+    return await this.googleTrendsService.daily(geo, date);
+  }
+
+  @Get('geo/:geo')
+  async geo(@Param('geo') geo: GoogleGeoCode) {
+    return await this.googleTrendsService.getDailyTrendsByGeo(geo);
+  }
+
   @Post('')
   async create(@Body() createGoogleTrendDto: CreateGoogleTrendDto) {
     return await this.googleTrendsService.create(createGoogleTrendDto);
   }
-
-
 }

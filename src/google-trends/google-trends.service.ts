@@ -1,16 +1,20 @@
-import {Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as googleTrends from 'google-trends-api';
 import * as moment from 'moment';
 import GoogleTrendsDailyInterface, {
   GoogleGeoCode,
   GoogleTrendFindOption,
-  GooGleTrendGeos,
 } from './google-trends.interface';
-import {InjectRepository} from '@nestjs/typeorm';
-import {GoogleTrend} from './entities/google-trend.entity';
-import {Between, FindManyOptions, FindOptionsWhere, Repository,} from 'typeorm';
-import {CreateGoogleTrendDto} from './dto/create-google-trend.dto';
-import {IS_DELETED} from 'src/typeorm/typeorm.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { GoogleTrend } from './entities/google-trend.entity';
+import {
+  Between,
+  FindManyOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
+import { CreateGoogleTrendDto } from './dto/create-google-trend.dto';
+import { IS_DELETED } from 'src/typeorm/typeorm.interface';
 
 @Injectable()
 export class GoogleTrendsService {
@@ -18,11 +22,14 @@ export class GoogleTrendsService {
     @InjectRepository(GoogleTrend)
     private readonly googleTrendRepository: Repository<GoogleTrend>,
   ) {}
-  async daily(geo : GoogleGeoCode): Promise<GoogleTrendsDailyInterface> {
+  async daily(
+    geo: GoogleGeoCode,
+    date?: string,
+  ): Promise<GoogleTrendsDailyInterface> {
     return new Promise(function (resolve, reject) {
       googleTrends.dailyTrends(
         {
-          trendDate: moment().format('YYYY-MM-DD'),
+          trendDate: date === undefined ? moment().format('YYYY-MM-DD') : date,
           geo: geo,
         },
         function (err, results) {
@@ -69,13 +76,21 @@ export class GoogleTrendsService {
     };
   }
 
+  async getDailyTrendsByGeo(geo: GoogleGeoCode) {
+    return await this.googleTrendRepository.find(
+      this.findManyOptionParse({
+        geo: geo,
+      }),
+    );
+  }
+
   async find(options: GoogleTrendFindOption) {
     return await this.googleTrendRepository.find(
       this.findManyOptionParse(options),
     );
   }
 
-  async findOne(options: GoogleTrendFindOption){
+  async findOne(options: GoogleTrendFindOption) {
     return await this.googleTrendRepository.findOne(
       this.findManyOptionParse(options),
     );

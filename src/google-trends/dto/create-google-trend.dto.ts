@@ -1,6 +1,6 @@
 import { IsEnum, IsString } from 'class-validator';
 import { GoogleTrend } from '../entities/google-trend.entity';
-import {GoogleGeoCode, GoogleTrendTypes} from '../google-trends.interface';
+import { GoogleGeoCode, GoogleTrendTypes } from '../google-trends.interface';
 
 export class CreateGoogleTrendDto {
   @IsString()
@@ -14,7 +14,7 @@ export class CreateGoogleTrendDto {
   type: GoogleTrendTypes;
 
   @IsString()
-  geo: GoogleGeoCode
+  geo: GoogleGeoCode;
 
   toGoogleTrendEntity(): GoogleTrend {
     return GoogleTrend.createFromDto(this);
