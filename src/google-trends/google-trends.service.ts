@@ -57,26 +57,24 @@ export class GoogleTrendsService {
   }
 
   findManyOptionParse({
-    start_date,
-    end_date,
     title,
     article_content,
-    type,
   }: GoogleTrendFindOption): FindManyOptions<GoogleTrend> {
     return {
       where: {
         isDeleted: IS_DELETED.N,
-        ...(title ? { title: title } : {}),
-        ...(article_content ? { articleContent: article_content } : {}),
-        ...(type ? { type: type } : {}),
-        ...(start_date && end_date
-          ? {
-              createdAt: Between(
-                new Date(`${start_date} 00:00:00`),
-                new Date(`${end_date} 23:59:59`),
-              ),
-            }
-          : {}),
+        // ...(title ? { title: title } : {}),
+        // ...(article_content ? { articleContent: article_content } : {}),
+        // ...(type ? { type: type } : {}),
+        // ...(start_date && end_date
+        //   ? {
+        //       createdAt: Between(
+        //         new Date(`${start_date} 00:00:00`),
+        //         new Date(`${end_date} 23:59:59`),
+        //       ),
+        //     }
+  //         : {}
+  // ),
       },
     };
   }

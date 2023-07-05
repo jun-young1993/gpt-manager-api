@@ -26,11 +26,8 @@ export default interface GoogleTrendsDailyInterface {
 }
 
 export interface GoogleTrendFindOption {
-  start_date?: string;
-  end_date?: string;
   title?: string;
   article_content?: string;
-  type?: GoogleTrendTypes;
   geo?: GoogleGeoCode;
 }
 

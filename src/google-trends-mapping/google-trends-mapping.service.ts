@@ -5,6 +5,7 @@ import { GoogleTrendsMapping } from './entities/google-trends-mapping.entity';
 import { FindOneOptions, Repository } from 'typeorm';
 import { IS_DELETED } from 'src/typeorm/typeorm.interface';
 import { InjectRepository } from '@nestjs/typeorm';
+import {GoogleTrendsMappingFindInterface} from "./google-trends-mapping.interface";
 
 @Injectable()
 export class GoogleTrendsMappingService {
@@ -17,6 +18,12 @@ export class GoogleTrendsMappingService {
     return await this.googleTrendsMappingRepository.save(
       createGoogleTrendsMappingDto.toGoogleTrendsMappingEntity(),
     );
+  }
+
+  async find(query: GoogleTrendsMappingFindInterface){
+    return await this.googleTrendsMappingRepository.find({
+      where: query
+    })
   }
 
   async findOne(options: FindOneOptions) {
