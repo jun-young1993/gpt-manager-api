@@ -1,3 +1,5 @@
+
+
 interface GoogleTrendsTrendingSearcheArticles {
   title: string;
   url: string;
@@ -29,6 +31,8 @@ export interface GoogleTrendFindOption {
   title?: string;
   article_content?: string;
   geo?: GoogleGeoCode;
+  id?: string
+  isDeleted?: 'Y'|'N'
 }
 
 export enum GoogleTrendTypes {

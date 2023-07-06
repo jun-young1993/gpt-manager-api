@@ -1,4 +1,9 @@
-export enum IS_DELETED {
+
+
+
+export enum IS_DELETED  {
   Y = 'Y',
   N = 'N',
 }
+
+

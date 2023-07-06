@@ -19,36 +19,36 @@ import { IS_DELETED } from 'src/typeorm/typeorm.interface';
 @Injectable()
 export class GoogleTrendsService {
   constructor(
-    @InjectRepository(GoogleTrend)
-    private readonly googleTrendRepository: Repository<GoogleTrend>,
+      @InjectRepository(GoogleTrend)
+      private readonly googleTrendRepository: Repository<GoogleTrend>,
   ) {}
   async daily(
-    geo: GoogleGeoCode,
-    date?: string,
+      geo: GoogleGeoCode,
+      date?: string,
   ): Promise<GoogleTrendsDailyInterface> {
     return new Promise(function (resolve, reject) {
 
       googleTrends.dailyTrends(
-        {
-          trendDate: date ?? moment().format('YYYY-MM-DD'),
-          geo: geo,
-        },
-        function (err, results) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(JSON.parse(results));
-          }
-        },
+          {
+            trendDate: date ?? moment().format('YYYY-MM-DD'),
+            geo: geo,
+          },
+          function (err, results) {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(JSON.parse(results));
+            }
+          },
       );
     });
   }
 
   async create(
-    createGoogleTrendDto: CreateGoogleTrendDto,
+      createGoogleTrendDto: CreateGoogleTrendDto,
   ): Promise<GoogleTrend> {
     return await this.googleTrendRepository.save(
-      createGoogleTrendDto.toGoogleTrendEntity(),
+        createGoogleTrendDto.toGoogleTrendEntity(),
     );
   }
 
@@ -57,12 +57,12 @@ export class GoogleTrendsService {
   }
 
   findManyOptionParse({
-    title,
-    article_content,
-  }: GoogleTrendFindOption): FindManyOptions<GoogleTrend> {
+                        id
+                      }: GoogleTrendFindOption): FindManyOptions<GoogleTrend> {
     return {
       where: {
         isDeleted: IS_DELETED.N,
+      ...(id ? {id : id} : {})
         // ...(title ? { title: title } : {}),
         // ...(article_content ? { articleContent: article_content } : {}),
         // ...(type ? { type: type } : {}),
@@ -73,38 +73,38 @@ export class GoogleTrendsService {
         //         new Date(`${end_date} 23:59:59`),
         //       ),
         //     }
-  //         : {}
-  // ),
+        //         : {}
+        // ),
       },
     };
   }
 
   async getDailyTrendsByGeo(geo: GoogleGeoCode) {
     return await this.googleTrendRepository.find(
-      this.findManyOptionParse({
-        geo: geo,
-      }),
+        this.findManyOptionParse({
+          geo: geo,
+        }),
     );
   }
 
   async find(options: GoogleTrendFindOption) {
     return await this.googleTrendRepository.find(
-      this.findManyOptionParse(options),
+        this.findManyOptionParse(options),
     );
   }
 
   async findOne(options: GoogleTrendFindOption) {
     return await this.googleTrendRepository.findOne(
-      this.findManyOptionParse(options),
+        this.findManyOptionParse(options),
     );
   }
 
   async delete(options: GoogleTrendFindOption) {
     return await this.googleTrendRepository.update(
-      this.findManyOptionParse(options).where as FindOptionsWhere<GoogleTrend>,
-      {
-        isDeleted: IS_DELETED.Y,
-      },
+        this.findManyOptionParse(options).where as FindOptionsWhere<GoogleTrend>,
+        {
+          isDeleted: IS_DELETED.Y,
+        },
     );
   }
 }

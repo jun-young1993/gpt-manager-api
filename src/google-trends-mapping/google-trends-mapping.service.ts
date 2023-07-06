@@ -26,6 +26,10 @@ export class GoogleTrendsMappingService {
     });
   }
 
+  getRepository(){
+    return this.googleTrendsMappingRepository;
+  }
+
   async findOne(options: FindOneOptions) {
     return await this.googleTrendsMappingRepository.findOne(options);
   }

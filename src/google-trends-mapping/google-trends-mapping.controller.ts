@@ -35,4 +35,6 @@ export class GoogleTrendsMappingController {
   ) {
     return this.googleTrendsMappingService.create(createGoogleTrendsMappingDto);
   }
+
+
 }

@@ -1,18 +1,28 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
-import { GoogleTrendsService } from './google-trends.service';
-import { CreateGoogleTrendDto } from './dto/create-google-trend.dto';
-import {
-  GoogleGeoCode,
-  GoogleTrendFindOption,
-} from './google-trends.interface';
+import {Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
+import {GoogleTrendsService} from './google-trends.service';
+import {CreateGoogleTrendDto} from './dto/create-google-trend.dto';
+import {GoogleGeoCode, GoogleTrendFindOption,} from './google-trends.interface';
+import {GoogleTrendsMappingService} from "../google-trends-mapping/google-trends-mapping.service";
+import {IS_DELETED} from "../typeorm/typeorm.interface";
 
 @Controller('google-trends')
 export class GoogleTrendsController {
-  constructor(private readonly googleTrendsService: GoogleTrendsService) {}
+  constructor(
+      private readonly googleTrendsService: GoogleTrendsService,
+      private readonly googleTrendsMappingService: GoogleTrendsMappingService
+  ) {}
 
   @Get('')
   async find(@Query() query: GoogleTrendFindOption) {
     return await this.googleTrendsService.find(query);
+  }
+
+  @Get('mapping/:id')
+  async indexByMappingId(@Param('id') id:string){
+    console.log('id',id)
+    return await this.googleTrendsService.find({
+      id: id
+    })
   }
 
   @Get('daily/:geo')
