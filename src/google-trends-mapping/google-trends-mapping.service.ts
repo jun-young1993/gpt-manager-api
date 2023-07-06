@@ -5,7 +5,7 @@ import { GoogleTrendsMapping } from './entities/google-trends-mapping.entity';
 import { FindOneOptions, Repository } from 'typeorm';
 import { IS_DELETED } from 'src/typeorm/typeorm.interface';
 import { InjectRepository } from '@nestjs/typeorm';
-import {GoogleTrendsMappingFindInterface} from "./google-trends-mapping.interface";
+import { GoogleTrendsMappingFindInterface } from './google-trends-mapping.interface';
 
 @Injectable()
 export class GoogleTrendsMappingService {
@@ -20,10 +20,10 @@ export class GoogleTrendsMappingService {
     );
   }
 
-  async find(query: GoogleTrendsMappingFindInterface){
+  async find(query: GoogleTrendsMappingFindInterface) {
     return await this.googleTrendsMappingRepository.find({
-      where: query
-    })
+      where: query,
+    });
   }
 
   async findOne(options: FindOneOptions) {
@@ -31,19 +31,25 @@ export class GoogleTrendsMappingService {
   }
 
   async findOrCreate(options: FindOneOptions['where']) {
-    let googleTrendsMapping =
-        await this.findOne({
-          where: options,
-        });
+    const googleTrendsMapping = await this.findOne({
+      where: options,
+    });
     if (googleTrendsMapping === null) {
-      const googleTrendMappingDto =
-          new CreateGoogleTrendsMappingDto();
+      const googleTrendMappingDto = new CreateGoogleTrendsMappingDto();
 
-      return await this.create(
-          Object.assign(googleTrendMappingDto, options),
-      );
+      return await this.create(Object.assign(googleTrendMappingDto, options));
     }
 
     return googleTrendsMapping;
+  }
+
+  async getGroupByDateAndGeo() {
+    return await this.googleTrendsMappingRepository
+      .createQueryBuilder('google_trends_mapping')
+      .select('date')
+      .addSelect('geo')
+      .groupBy('date')
+      .addGroupBy('geo')
+      .getRawMany();
   }
 }
