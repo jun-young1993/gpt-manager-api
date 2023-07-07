@@ -1,15 +1,18 @@
-import {Body, Controller, Get, Param, Post, Query} from '@nestjs/common';
-import {GoogleTrendsService} from './google-trends.service';
-import {CreateGoogleTrendDto} from './dto/create-google-trend.dto';
-import {GoogleGeoCode, GoogleTrendFindOption,} from './google-trends.interface';
-import {GoogleTrendsMappingService} from "../google-trends-mapping/google-trends-mapping.service";
-import {IS_DELETED} from "../typeorm/typeorm.interface";
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { GoogleTrendsService } from './google-trends.service';
+import { CreateGoogleTrendDto } from './dto/create-google-trend.dto';
+import {
+  GoogleGeoCode,
+  GoogleTrendFindOption,
+} from './google-trends.interface';
+import { GoogleTrendsMappingService } from '../google-trends-mapping/google-trends-mapping.service';
+import { IS_DELETED } from '../typeorm/typeorm.interface';
 
 @Controller('google-trends')
 export class GoogleTrendsController {
   constructor(
-      private readonly googleTrendsService: GoogleTrendsService,
-      private readonly googleTrendsMappingService: GoogleTrendsMappingService
+    private readonly googleTrendsService: GoogleTrendsService,
+    private readonly googleTrendsMappingService: GoogleTrendsMappingService,
   ) {}
 
   @Get('')
@@ -17,12 +20,12 @@ export class GoogleTrendsController {
     return await this.googleTrendsService.find(query);
   }
 
-  @Get('mapping/:id')
-  async indexByMappingId(@Param('id') id:string){
-    console.log('id',id)
+  @Get('mapping/:mapping_id')
+  async indexByMappingId(@Param('mapping_id') mapping_id: string) {
+    console.log('id', mapping_id);
     return await this.googleTrendsService.find({
-      id: id
-    })
+      mapping_id: mapping_id,
+    });
   }
 
   @Get('daily/:geo')

@@ -14,11 +14,11 @@ import {
   GooGleTrendGeos,
   GoogleTrendTypes,
 } from 'src/google-trends/google-trends.interface';
-import sleep from 'src/lib/sleep';
-import * as moment from 'moment';
 import { GoogleTrendsMappingService } from 'src/google-trends-mapping/google-trends-mapping.service';
 import { IS_DELETED } from 'src/typeorm/typeorm.interface';
-import { CreateGoogleTrendsMappingDto } from 'src/google-trends-mapping/dto/create-google-trends-mapping.dto';
+import sleep from 'src/lib/sleep';
+import { isEmpty } from 'lodash';
+import * as moment from 'moment';
 
 @Injectable()
 export class TasksService {
@@ -73,36 +73,41 @@ export class TasksService {
         const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
         for (const trendingSearchDay of trendingSearchDays) {
           const trendingSearchDayDate = trendingSearchDay.date;
-          for (const trendingSearch of trendingSearchDay.trendingSearches) {
 
-            const googleTrendsMapping = await this.googleTrendsMappingService.findOrCreate({
-              isDeleted: IS_DELETED.N,
-              geo: geo,
-              date: trendingSearchDayDate,
-              title: trendingSearch.title.query,
-            })
-            for(const articles of trendingSearch.articles){
-              const {title, url} = articles;
+          this.logger.info(
+            `[START GOOGLE TRENDY FOR TO DAY] ${trendingSearchDayDate}`,
+          );
+          for (const trendingSearch of trendingSearchDay.trendingSearches) {
+            const googleTrendsMapping =
+              await this.googleTrendsMappingService.findOrCreate({
+                isDeleted: IS_DELETED.N,
+                geo: geo,
+                date: trendingSearchDayDate,
+                title: trendingSearch.title.query,
+              });
+            for (const articles of trendingSearch.articles) {
+              const { title, url } = articles;
               const googleTrend = await this.googleTrendService.getOne({
                 where: {
-                  id: googleTrendsMapping.id
-                }
-              })
-
-              if(googleTrend === null){
+                  mapping_id: googleTrendsMapping.id,
+                  url: url,
+                },
+              });
+              if (isEmpty(googleTrend)) {
                 const googleTrendDto = new CreateGoogleTrendDto();
                 await this.googleTrendService.create(
-                    Object.assign(googleTrendDto, {
-                      id: googleTrendsMapping.id,
-                      title: title,
-                      url: url,
-                      articleContent: ''
-                    })
-                )
+                  Object.assign(googleTrendDto, {
+                    mapping_id: googleTrendsMapping.id,
+                    title: title,
+                    url: url,
+                    articleContent: '',
+                  }),
+                );
               }
             }
-
+            await sleep(100);
           }
+          await sleep(1000);
         }
       }
       //

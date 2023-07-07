@@ -31,8 +31,9 @@ export interface GoogleTrendFindOption {
   title?: string;
   article_content?: string;
   geo?: GoogleGeoCode;
-  id?: string
-  isDeleted?: 'Y'|'N'
+  id?: number;
+  isDeleted?: 'Y' | 'N';
+  mapping_id?: string;
 }
 
 export enum GoogleTrendTypes {

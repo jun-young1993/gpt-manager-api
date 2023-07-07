@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { CreateGoogleTrendDto } from '../dto/create-google-trend.dto';
@@ -13,11 +14,14 @@ import { GooGleTrendGeos } from '../google-trends.interface';
 
 @Entity('google_trend')
 export class GoogleTrend {
-  @PrimaryColumn({
+  @PrimaryGeneratedColumn('increment')
+  public id: number;
+
+  @Column({
     type: 'varchar',
     length: 36,
   })
-  id: string;
+  mapping_id: string;
 
   @Column()
   title: string;
@@ -52,7 +56,7 @@ export class GoogleTrend {
 
   static createFromDto(createDto: CreateGoogleTrendDto): GoogleTrend {
     const googleTrend = new GoogleTrend();
-    googleTrend.id = uuid();
+    googleTrend.mapping_id = uuid();
     return Object.assign(googleTrend, createDto);
   }
 }
