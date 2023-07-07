@@ -22,6 +22,7 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { LoggerModule } from './logger/Logger.module';
 import { GoogleTrendsModule } from './google-trends/google-trends.module';
 import { GoogleTrendsMappingModule } from './google-trends-mapping/google-trends-mapping.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { GoogleTrendsMappingModule } from './google-trends-mapping/google-trends
     LoggerModule,
     GoogleTrendsModule,
     GoogleTrendsMappingModule,
+    CommentsModule,
   ],
   providers: [
     {
