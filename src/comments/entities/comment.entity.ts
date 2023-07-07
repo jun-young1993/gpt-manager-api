@@ -7,6 +7,8 @@ import {
 } from 'typeorm';
 import { CreateCommentDto } from '../dto/create-comment.dto';
 import { CommentTypeStrings } from '../comments.interface';
+import { IS_DELETED } from 'src/typeorm/typeorm.interface';
+import { IsEnum } from 'class-validator';
 
 @Entity('comment')
 export class Comment {
@@ -29,10 +31,20 @@ export class Comment {
   public comment: string;
 
   @Column({
-    type: 'number',
+    type: 'int',
     nullable: true,
+    name: 'parent_comment_id',
   })
   public parentCommentId?: number;
+
+  @Column({
+    name: 'is_deleted',
+    type: 'varchar',
+    length: 1,
+    default: IS_DELETED.N,
+  })
+  @IsEnum(IS_DELETED)
+  public isDeleted: IS_DELETED;
 
   @CreateDateColumn({
     name: 'created_at',

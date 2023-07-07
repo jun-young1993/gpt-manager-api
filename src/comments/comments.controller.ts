@@ -8,13 +8,12 @@ export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentsService.create(createCommentDto);
+  async create(@Body() createCommentDto: CreateCommentDto) {
+    return await this.commentsService.create(createCommentDto);
   }
 
-  // @Get(':id')
-  // findComment(@Param('id') id: string) {
-  //   return this.commentsService.fineComment(+id);
-  // }
-
+  @Get(':comment_id')
+  async findByComment(@Param('comment_id') commentId: string) {
+    return await this.commentsService.findByComment(commentId);
+  }
 }
