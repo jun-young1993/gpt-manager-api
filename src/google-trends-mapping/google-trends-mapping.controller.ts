@@ -29,6 +29,11 @@ export class GoogleTrendsMappingController {
     return await this.googleTrendsMappingService.getGroupByDateAndGeo();
   }
 
+  @Get('group/date-geo-title')
+  async getGroupByDateAndGeoAndTitle() {
+    return await this.googleTrendsMappingService.getGroupByDateAndGeoAndTitle();
+  }
+
   @Post()
   async create(
     @Body() createGoogleTrendsMappingDto: CreateGoogleTrendsMappingDto,

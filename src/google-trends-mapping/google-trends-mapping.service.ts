@@ -56,4 +56,16 @@ export class GoogleTrendsMappingService {
       .addGroupBy('geo')
       .getRawMany();
   }
+
+  async getGroupByDateAndGeoAndTitle() {
+    return await this.googleTrendsMappingRepository
+        .createQueryBuilder('google_trends_mapping')
+        .select('date')
+        .addSelect('geo')
+        .addSelect('title')
+        .groupBy('date')
+        .addGroupBy('geo')
+        .addGroupBy('title')
+        .getRawMany();
+  }
 }
