@@ -85,6 +85,7 @@ export class TasksService {
                 date: trendingSearchDayDate,
                 title: trendingSearch.title.query,
               });
+
             for (const articles of trendingSearch.articles) {
               const { title, url } = articles;
               const googleTrend = await this.googleTrendService.getOne({
@@ -105,6 +106,8 @@ export class TasksService {
                 );
               }
             }
+
+
             await sleep(100);
           }
           await sleep(1000);

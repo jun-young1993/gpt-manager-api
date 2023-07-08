@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { CreateGoogleTrendsMappingDto } from './dto/create-google-trends-mapping.dto';
 import { UpdateGoogleTrendsMappingDto } from './dto/update-google-trends-mapping.dto';
 import { GoogleTrendsMapping } from './entities/google-trends-mapping.entity';
-import { FindOneOptions, Repository } from 'typeorm';
+import {FindOneOptions, FindOptionsWhere, Repository} from 'typeorm';
 import { IS_DELETED } from 'src/typeorm/typeorm.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GoogleTrendsMappingFindInterface } from './google-trends-mapping.interface';
+import {QueryDeepPartialEntity} from "typeorm/query-builder/QueryPartialEntity";
 
 @Injectable()
 export class GoogleTrendsMappingService {
@@ -24,6 +25,10 @@ export class GoogleTrendsMappingService {
     return await this.googleTrendsMappingRepository.find({
       where: query,
     });
+  }
+
+  async update(query:FindOptionsWhere<GoogleTrendsMapping>, trendEntity:  QueryDeepPartialEntity<GoogleTrendsMapping>){
+    return await this.googleTrendsMappingRepository.update(query,trendEntity);
   }
 
   getRepository(){
