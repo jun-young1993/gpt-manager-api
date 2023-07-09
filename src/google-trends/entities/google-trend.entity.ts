@@ -26,7 +26,9 @@ export class GoogleTrend {
   @Column()
   title: string;
 
-  @Column()
+  @Column({
+    type: 'text'
+  })
   url: string;
 
   @Column({

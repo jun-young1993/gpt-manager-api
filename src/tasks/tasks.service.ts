@@ -20,6 +20,7 @@ import sleep from 'src/lib/sleep';
 import { isEmpty } from 'lodash';
 import * as moment from 'moment';
 import {prompts} from "../config/config";
+import {Not} from "typeorm";
 
 @Injectable()
 export class TasksService {
@@ -87,10 +88,9 @@ export class TasksService {
                 title: trendingSearch.title.query,
               });
 
-            const createGptArticleCount = 3;
-            let articleIndex = 0;
+
             for (const articles of trendingSearch.articles) {
-              articleIndex++;
+
               const { title, url } = articles;
               const googleTrend = await this.googleTrendService.getOne({
                 where: {
@@ -101,13 +101,21 @@ export class TasksService {
               if (isEmpty(googleTrend)) {
                 let articleContent:string = ''
                 const googleTrendDto = new CreateGoogleTrendDto();
-                if(createGptArticleCount >= articleIndex){
+                const articleContentCount = await this.googleTrendService.getRepository().count({
+                  where: {
+                    mapping_id: googleTrendsMapping.id,
+                    articleContent: Not('')
+                  }
+                });
+                this.logger.info(`article content count ${articleContentCount}`);
+                if(articleContentCount <= 3){
                   const result = await this.gptService.createChatCompletion(prompts.article(title,url,geo))
                   const { content } = result.choices[0].message;
                   articleContent = content
                   this.logger.info(JSON.stringify(result));
                   await sleep(3000);
                 }
+
                 await this.googleTrendService.create(
                   Object.assign(googleTrendDto, {
                     mapping_id: googleTrendsMapping.id,

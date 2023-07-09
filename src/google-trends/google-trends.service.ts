@@ -107,4 +107,8 @@ export class GoogleTrendsService {
       },
     );
   }
+
+  getRepository(){
+    return this.googleTrendRepository;
+  }
 }
