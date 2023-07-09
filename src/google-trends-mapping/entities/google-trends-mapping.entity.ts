@@ -34,11 +34,11 @@ export class GoogleTrendsMapping {
   })
   public geo: string;
 
-  @Column({
-    type: 'text',
-    name: 'article_content',
-  })
-  articleContent: string;
+  // @Column({
+  //   type: 'text',
+  //   name: 'article_content',
+  // })
+  // articleContent: string;
 
   @Column({
     type: 'varchar',

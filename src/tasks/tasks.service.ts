@@ -7,7 +7,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { GoogleTrendsService } from 'src/google-trends/google-trends.service';
 import { Logger } from 'winston';
 import { GptService } from 'src/gpt/gpt.service';
-import { ChatCompletionRequestMessage } from 'openai';
+import {ChatCompletionRequestMessage, CreateCompletionRequest} from 'openai';
 import { CreateGoogleTrendDto } from 'src/google-trends/dto/create-google-trend.dto';
 import {
   GoogleGeoCode,
@@ -19,6 +19,7 @@ import { IS_DELETED } from 'src/typeorm/typeorm.interface';
 import sleep from 'src/lib/sleep';
 import { isEmpty } from 'lodash';
 import * as moment from 'moment';
+import {prompts} from "../config/config";
 
 @Injectable()
 export class TasksService {
@@ -86,7 +87,10 @@ export class TasksService {
                 title: trendingSearch.title.query,
               });
 
+            const createGptArticleCount = 3;
+            let articleIndex = 0;
             for (const articles of trendingSearch.articles) {
+              articleIndex++;
               const { title, url } = articles;
               const googleTrend = await this.googleTrendService.getOne({
                 where: {
@@ -95,20 +99,30 @@ export class TasksService {
                 },
               });
               if (isEmpty(googleTrend)) {
+                let articleContent:string = ''
                 const googleTrendDto = new CreateGoogleTrendDto();
+                if(createGptArticleCount >= articleIndex){
+                  const result = await this.gptService.createChatCompletion(prompts.article(title,url,geo))
+                  const { content } = result.choices[0].message;
+                  articleContent = content
+                  this.logger.info(JSON.stringify(result));
+                  await sleep(3000);
+                }
                 await this.googleTrendService.create(
                   Object.assign(googleTrendDto, {
                     mapping_id: googleTrendsMapping.id,
                     title: title,
                     url: url,
-                    articleContent: '',
+                    articleContent: articleContent,
                   }),
                 );
+
+
               }
             }
 
 
-            await sleep(100);
+            await sleep(1000);
           }
           await sleep(1000);
         }

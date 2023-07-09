@@ -40,11 +40,11 @@ export class GptController {
   }
 
   @Post('chat/gpt-completions')
-  async createCompletion(@Body() { model, prompt }: GptCompletionGptDto) {
+  async createCompletion(@Body() { model, prompt, max_tokens }: GptCompletionGptDto) {
     const createCompletionRequest: CreateCompletionRequest = {
       model: model ?? 'text-davinci-003',
       prompt,
-      max_tokens: 100,
+      max_tokens: max_tokens ?? 1000,
       temperature: 0,
     };
     return await this.gptService.createCompletion(createCompletionRequest);

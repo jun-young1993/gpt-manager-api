@@ -1,4 +1,4 @@
-import { IsArray, IsEmpty, IsOptional, IsString } from 'class-validator';
+import {IsArray, IsEmpty, IsNumber, IsOptional, IsString} from 'class-validator';
 import { CreateChatCompletionRequest } from 'openai';
 
 export class CompletionGptDto {
@@ -18,5 +18,9 @@ export class GptCompletionGptDto {
 
   @IsString()
   prompt : string;
+
+  @IsOptional()
+  @IsNumber()
+  max_tokens?: number
 }
 
