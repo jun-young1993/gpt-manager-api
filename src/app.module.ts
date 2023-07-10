@@ -23,6 +23,8 @@ import { LoggerModule } from './logger/Logger.module';
 import { GoogleTrendsModule } from './google-trends/google-trends.module';
 import { GoogleTrendsMappingModule } from './google-trends-mapping/google-trends-mapping.module';
 import { CommentsModule } from './comments/comments.module';
+import { CodeModule } from './code/code.module';
+import { CodeItemModule } from './code-item/code-item.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { CommentsModule } from './comments/comments.module';
     GoogleTrendsModule,
     GoogleTrendsMappingModule,
     CommentsModule,
+    CodeModule,
+    CodeItemModule,
   ],
   providers: [
     {
