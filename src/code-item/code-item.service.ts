@@ -11,6 +11,9 @@ const cacheKeys = {
   findOneByKey: (code: string) => {
     return `codeItem.findOneByCode.${code}`;
   },
+  findOne: (id: number) => {
+    return `codeItem.findOneByCode.${id}`;
+  },
   findOneByKeyAndCode: (code: string, key: string) => {
     return `codeItem.findOneByCodeAndKey.${code}.${key}`;
   },
@@ -75,9 +78,26 @@ export class CodeItemService {
           .createQueryBuilder('codeItem')
           .innerJoin('codeItem.code', 'code')
           .where('code.code = :code', { code })
-          .orderBy('order')
+          .orderBy('codeItem.order')
           .getMany(),
       );
+    });
+  }
+
+  async findOneByCodeId(id: number) {
+    const cacheKey = cacheKeys.findOne(id);
+
+    return await this.redisService.caching(cacheKey, async () => {
+      const code: Code = await this.codeService.findOne({
+        where: {id: id}
+      })
+      return Promise.resolve(
+        await this.codeItemRepository.find({
+          where: {
+            code: code
+          }
+        })
+      )
     });
   }
 }

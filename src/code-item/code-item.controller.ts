@@ -25,6 +25,13 @@ export class CodeItemController {
     return await this.codeItemService.findOneByCode(code);
   }
 
+  @Get('code/:id')
+  async findOneByCodeId(
+      @Param('id') id: string,
+  ) {
+    return await this.codeItemService.findOneByCodeId(Number(id));
+  }
+
   @Get(':code/:key')
   async findOneByCodeAndKey(
     @Param('code') code: string,
