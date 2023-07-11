@@ -70,7 +70,6 @@ export class TasksService {
   @Cron(CronExpression.EVERY_4_HOURS)
   async daily() {
     try {
-      return true;
       for (const [_, geo] of Object.entries(GooGleTrendGeos)) {
         const dailyTrends = await this.googleTrendService.daily(geo);
         const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
