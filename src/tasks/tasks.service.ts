@@ -7,7 +7,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { GoogleTrendsService } from 'src/google-trends/google-trends.service';
 import { Logger } from 'winston';
 import { GptService } from 'src/gpt/gpt.service';
-import {ChatCompletionRequestMessage, CreateCompletionRequest} from 'openai';
+import { ChatCompletionRequestMessage, CreateCompletionRequest } from 'openai';
 import { CreateGoogleTrendDto } from 'src/google-trends/dto/create-google-trend.dto';
 import {
   GoogleGeoCode,
@@ -19,8 +19,8 @@ import { IS_DELETED } from 'src/typeorm/typeorm.interface';
 import sleep from 'src/lib/sleep';
 import { isEmpty } from 'lodash';
 import * as moment from 'moment';
-import {prompts} from "../config/config";
-import {Not} from "typeorm";
+import { prompts } from '../config/config';
+import { Not } from 'typeorm';
 
 @Injectable()
 export class TasksService {
@@ -70,6 +70,7 @@ export class TasksService {
   @Cron(CronExpression.EVERY_4_HOURS)
   async daily() {
     try {
+      return true;
       for (const [_, geo] of Object.entries(GooGleTrendGeos)) {
         const dailyTrends = await this.googleTrendService.daily(geo);
         const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
@@ -88,9 +89,7 @@ export class TasksService {
                 title: trendingSearch.title.query,
               });
 
-
             for (const articles of trendingSearch.articles) {
-
               const { title, url } = articles;
               const googleTrend = await this.googleTrendService.getOne({
                 where: {
@@ -99,19 +98,25 @@ export class TasksService {
                 },
               });
               if (isEmpty(googleTrend)) {
-                let articleContent:string = ''
+                let articleContent = '';
                 const googleTrendDto = new CreateGoogleTrendDto();
-                const articleContentCount = await this.googleTrendService.getRepository().count({
-                  where: {
-                    mapping_id: googleTrendsMapping.id,
-                    articleContent: Not('')
-                  }
-                });
-                this.logger.info(`article content count ${articleContentCount}`);
-                if(articleContentCount <= 3){
-                  const result = await this.gptService.createChatCompletion(prompts.article(title,url,geo))
+                const articleContentCount = await this.googleTrendService
+                  .getRepository()
+                  .count({
+                    where: {
+                      mapping_id: googleTrendsMapping.id,
+                      articleContent: Not(''),
+                    },
+                  });
+                this.logger.info(
+                  `article content count ${articleContentCount}`,
+                );
+                if (articleContentCount <= 3) {
+                  const result = await this.gptService.createChatCompletion(
+                    prompts.article(title, url, geo),
+                  );
                   const { content } = result.choices[0].message;
-                  articleContent = content
+                  articleContent = content;
                   this.logger.info(JSON.stringify(result));
                   await sleep(3000);
                 }
@@ -124,11 +129,8 @@ export class TasksService {
                     articleContent: articleContent,
                   }),
                 );
-
-
               }
             }
-
 
             await sleep(1000);
           }

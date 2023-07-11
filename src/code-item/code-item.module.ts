@@ -5,11 +5,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CodeItem } from './entities/code-item.entity';
 import { CodeModule } from 'src/code/code.module';
 import { RedisModule } from 'src/redis/redis.module';
+import { Code } from 'src/code/entities/code.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CodeItem]), CodeModule, RedisModule],
+  imports: [
+    TypeOrmModule.forFeature([CodeItem, Code]),
+    CodeModule,
+    RedisModule,
+  ],
   controllers: [CodeItemController],
-  providers: [CodeItemService],
+  providers: [CodeItemService, CodeModule],
   exports: [CodeItemModule],
 })
 export class CodeItemModule {}

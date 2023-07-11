@@ -20,6 +20,11 @@ export class CodeItemController {
     return this.codeItemService.create(createCodeItemDto);
   }
 
+  @Get(':code')
+  async findOneByCode(@Param('code') code: string) {
+    return await this.codeItemService.findOneByCode(code);
+  }
+
   @Get(':code/:key')
   async findOneByCodeAndKey(
     @Param('code') code: string,
