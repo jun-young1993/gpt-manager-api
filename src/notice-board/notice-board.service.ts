@@ -3,7 +3,7 @@ import { CreateNoticeBoardDto } from './dto/create-notice-board.dto';
 import { UpdateNoticeBoardDto } from './dto/update-notice-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NoticeBoard } from './entities/notice-board.entity';
-import { FindManyOptions, Repository } from 'typeorm';
+import {FindManyOptions, FindOneOptions, Repository} from 'typeorm';
 
 @Injectable()
 export class NoticeBoardService {
@@ -19,5 +19,9 @@ export class NoticeBoardService {
 
   find(options: FindManyOptions) {
     return this.noticeBoardRepository.find(options);
+  }
+
+  findOne(options: FindOneOptions) {
+    return this.noticeBoardRepository.findOne(options);
   }
 }

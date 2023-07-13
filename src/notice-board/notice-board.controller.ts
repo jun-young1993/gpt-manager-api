@@ -15,6 +15,20 @@ import { UpdateNoticeBoardDto } from './dto/update-notice-board.dto';
 export class NoticeBoardController {
   constructor(private readonly noticeBoardService: NoticeBoardService) {}
 
+  @Get()
+  find(){
+    return this.noticeBoardService.find({});
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string){
+    return this.noticeBoardService.findOne({
+      where: {
+        id: Number(id)
+      }
+    });
+  }
+
   @Post()
   create(@Body() createNoticeBoardDto: CreateNoticeBoardDto) {
     return this.noticeBoardService.create(createNoticeBoardDto);
@@ -28,4 +42,6 @@ export class NoticeBoardController {
       },
     });
   }
+
+
 }
