@@ -12,15 +12,23 @@ import { GoogleTrendsModule } from 'src/google-trends/google-trends.module';
 import { GoogleTrendsService } from 'src/google-trends/google-trends.service';
 import { GptModule } from 'src/gpt/gpt.module';
 import { GoogleTrendsMappingModule } from 'src/google-trends-mapping/google-trends-mapping.module';
+import {Code} from "../code/entities/code.entity";
+import {CodeItem} from "../code-item/entities/code-item.entity";
+import {CodeModule} from "../code/code.module";
+import {CodeItemModule} from "../code-item/code-item.module";
+import {NoticeBoardModule} from "../notice-board/notice-board.module";
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    TypeOrmModule.forFeature([ChatRoom, Chat]),
+    TypeOrmModule.forFeature([ChatRoom, Chat,Code,CodeItem]),
     ChatModule,
     GoogleTrendsModule,
     GoogleTrendsMappingModule,
     GptModule,
+    CodeModule,
+    CodeItemModule,
+    NoticeBoardModule,
   ],
   controllers: [TasksController],
   providers: [RedisService, ChatService, TasksService, GoogleTrendsService],

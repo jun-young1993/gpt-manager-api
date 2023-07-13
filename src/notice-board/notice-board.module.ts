@@ -8,6 +8,6 @@ import { NoticeBoard } from './entities/notice-board.entity';
   imports: [TypeOrmModule.forFeature([NoticeBoard])],
   controllers: [NoticeBoardController],
   providers: [NoticeBoardService],
-  exports: [NoticeBoardModule],
+  exports: [NoticeBoardModule,NoticeBoardService],
 })
 export class NoticeBoardModule {}

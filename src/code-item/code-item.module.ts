@@ -15,6 +15,6 @@ import { Code } from 'src/code/entities/code.entity';
   ],
   controllers: [CodeItemController],
   providers: [CodeItemService, CodeModule],
-  exports: [CodeItemModule],
+  exports: [CodeItemModule,CodeItemService],
 })
 export class CodeItemModule {}

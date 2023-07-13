@@ -3,6 +3,7 @@ import { NoticeBoard } from '../entities/notice-board.entity';
 import { NOTICE_CONTENT_TYPE } from 'src/typeorm/typeorm.interface';
 
 export class CreateNoticeBoardDto {
+
   @IsString()
   title: string;
 
