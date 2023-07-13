@@ -42,7 +42,7 @@ export class RedisService {
   }
 
   async caching(key: string, cb: any, defaultValue = {}) {
-    try{
+    try {
       const cache = await this.get(key);
       if (isEmpty(cache)) {
         this.logger.info(`[caching expired] ${key}`);

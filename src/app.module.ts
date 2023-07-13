@@ -25,6 +25,7 @@ import { GoogleTrendsMappingModule } from './google-trends-mapping/google-trends
 import { CommentsModule } from './comments/comments.module';
 import { CodeModule } from './code/code.module';
 import { CodeItemModule } from './code-item/code-item.module';
+import { NoticeBoardModule } from './notice-board/notice-board.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { CodeItemModule } from './code-item/code-item.module';
     CommentsModule,
     CodeModule,
     CodeItemModule,
+    NoticeBoardModule,
   ],
   providers: [
     {

@@ -2,40 +2,51 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { CreateGoogleTrendDto } from '../dto/create-google-trend.dto';
-import { v4 as uuid } from 'uuid';
+import { CreateNoticeBoardDto } from '../dto/create-notice-board.dto';
 import { IsEnum } from 'class-validator';
 import { IS_DELETED } from 'src/typeorm/typeorm.interface';
-import { GooGleTrendGeos } from '../google-trends.interface';
 
-@Entity('google_trend')
-export class GoogleTrend {
+@Entity('notice_board')
+export class NoticeBoard {
   @PrimaryGeneratedColumn('increment')
   public id: number;
-
-  @Column({
-    type: 'varchar',
-    length: 36,
-  })
-  mapping_id: string;
 
   @Column()
   title: string;
 
   @Column({
-    type: 'text',
+    length: 30,
   })
-  url: string;
+  author: string;
 
   @Column({
     type: 'text',
-    name: 'article_content',
   })
-  articleContent: string;
+  content: string;
+
+  @Column({
+    default: 0,
+  })
+  views: number;
+
+  @Column({
+    default: 0,
+  })
+  likes: number;
+
+  @Column({
+    length: 30,
+  })
+  category: string;
+
+  @Column({
+    name: 'content_type',
+    length: 10,
+  })
+  contentType: string;
 
   @Column({
     name: 'is_deleted',
@@ -56,9 +67,8 @@ export class GoogleTrend {
   })
   updatedAt: Date;
 
-  static createFromDto(createDto: CreateGoogleTrendDto): GoogleTrend {
-    const googleTrend = new GoogleTrend();
-    googleTrend.mapping_id = uuid();
-    return Object.assign(googleTrend, createDto);
+  static createFromDto(createDto: CreateNoticeBoardDto) {
+    const noticeBoard = new NoticeBoard();
+    return Object.assign(noticeBoard, createDto);
   }
 }
