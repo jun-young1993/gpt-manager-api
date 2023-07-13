@@ -17,7 +17,7 @@ export class NoticeBoardService {
     );
   }
 
-  find(options: FindManyOptions){
+  find(options: FindManyOptions) {
     return this.noticeBoardRepository.find(options);
   }
 }
