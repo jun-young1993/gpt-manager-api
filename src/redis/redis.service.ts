@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
 import { DEFAULT_REDIS_NAMESPACE, InjectRedis } from '@liaoliaots/nestjs-redis';
 import { ConfigService } from '@nestjs/config';
+import { Logger } from 'winston';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { isEmpty } from 'lodash';
 
 @Injectable()
 export class RedisService {
   constructor(
     @InjectRedis(DEFAULT_REDIS_NAMESPACE) private readonly redis: Redis,
     private readonly configService: ConfigService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async set(key: string, value: string, ttl?: number): Promise<string> {
@@ -37,15 +41,26 @@ export class RedisService {
     return this.redis.del(key);
   }
 
-  async caching(key: string, cb: any) {
-    const cache = await this.get(key);
-    if (cache === null) {
-      const data = await cb();
-      if (data !== null) {
-        await this.set(key, JSON.stringify(data));
-        return data;
+  async caching(key: string, cb: any, defaultValue = {}) {
+    try{
+      const cache = await this.get(key);
+      if (isEmpty(cache)) {
+        this.logger.info(`[caching expired] ${key}`);
+        const data = await cb();
+        if (!isEmpty(data)) {
+          await this.set(key, JSON.stringify(data));
+
+          return data;
+        }
+        return defaultValue;
       }
+      return JSON.parse(cache);
+    } catch (e) {
+      this.logger.error(`[caching error] ${key}`);
+      this.logger.error(e);
+      return {
+        message: e,
+      };
     }
-    return JSON.parse(cache);
   }
 }
