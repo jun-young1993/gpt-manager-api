@@ -6,6 +6,12 @@ import { Configuration } from 'openai';
 
 export default () =>
   ({
+    isDev: () => {
+      if (process.env.APP_NAME === 'DEV') {
+        return true;
+      }
+      return false;
+    },
     db: {
       type: process.env.DB_TYPE,
       host: process.env.DB_HOST,

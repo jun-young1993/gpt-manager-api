@@ -15,16 +15,17 @@ import {
   GoogleTrendTypes,
 } from 'src/google-trends/google-trends.interface';
 import { GoogleTrendsMappingService } from 'src/google-trends-mapping/google-trends-mapping.service';
-import {IS_DELETED, NOTICE_CONTENT_TYPE} from 'src/typeorm/typeorm.interface';
+import { IS_DELETED, NOTICE_CONTENT_TYPE } from 'src/typeorm/typeorm.interface';
 import sleep from 'src/lib/sleep';
 import { isEmpty } from 'lodash';
 import * as moment from 'moment';
 import { prompts } from '../config/config';
 import { Not } from 'typeorm';
-import {CodeItemService} from "../code-item/code-item.service";
-import {CodeService} from "../code/code.service";
-import {NoticeBoardService} from "../notice-board/notice-board.service";
-import {CreateNoticeBoardDto} from "../notice-board/dto/create-notice-board.dto";
+import { CodeItemService } from '../code-item/code-item.service';
+import { CodeService } from '../code/code.service';
+import { NoticeBoardService } from '../notice-board/notice-board.service';
+import { CreateNoticeBoardDto } from '../notice-board/dto/create-notice-board.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TasksService {
@@ -36,14 +37,18 @@ export class TasksService {
     private readonly gptService: GptService,
     private readonly codeItemService: CodeItemService,
     private readonly codeService: CodeService,
-    private readonly  noticeBoardService: NoticeBoardService,
-
+    private readonly noticeBoardService: NoticeBoardService,
+    private readonly configService: ConfigService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Cron('10 10 11 * * *')
   async syncChat() {
     try {
+      if (this.configService.get('isDev')) {
+        this.logger.info('[CHAT-SYNC] IS DEV');
+        return true;
+      }
       this.logger.info('[CHAT-SYNC IDS]');
 
       const nonSyncRooms = await this.chatService.getNonSyncRooms();
@@ -78,7 +83,10 @@ export class TasksService {
   @Cron(CronExpression.EVERY_4_HOURS)
   async daily() {
     try {
-      
+      if (this.configService.get('isDev')) {
+        this.logger.info('[CHAT-SYNC] IS DEV');
+        return true;
+      }
       for (const [_, geo] of Object.entries(GooGleTrendGeos)) {
         const dailyTrends = await this.googleTrendService.daily(geo);
         const trendingSearchDays = dailyTrends.default.trendingSearchesDays;
@@ -227,44 +235,54 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_HOUR)
   async topic() {
-    try{
-      const categoryCode = "commu-category";
-      const categoryCodes = await this.codeItemService.findOneByCode(categoryCode)
-      const categoryCodeRandomNumber = Math.floor(Math.random() * (categoryCodes.length))
-      const randomCategory = categoryCodes[categoryCodeRandomNumber]
+    try {
+      if (this.configService.get('isDev')) {
+        this.logger.info('[CHAT-SYNC] IS DEV');
+        return true;
+      }
+      const categoryCode = 'commu-category';
+      const categoryCodes = await this.codeItemService.findOneByCode(
+        categoryCode,
+      );
+      const categoryCodeRandomNumber = Math.floor(
+        Math.random() * categoryCodes.length,
+      );
+      const randomCategory = categoryCodes[categoryCodeRandomNumber];
       const findCategoryCode = await this.codeService.findOne({
         where: {
-          code: randomCategory.key
-        }
-      })
+          code: randomCategory.key,
+        },
+      });
 
-      const topicCodes = await this.codeItemService.findOneByCodeId( findCategoryCode.id)
-      const topicCodeRandomNumber = Math.floor(Math.random() * (topicCodes.length));
-      const {value, key} = topicCodes[topicCodeRandomNumber];
-
-
+      const topicCodes = await this.codeItemService.findOneByCodeId(
+        findCategoryCode.id,
+      );
+      const topicCodeRandomNumber = Math.floor(
+        Math.random() * topicCodes.length,
+      );
+      const { value, key } = topicCodes[topicCodeRandomNumber];
 
       const result = await this.gptService.createChatCompletion(
-          prompts.topic(value),
+        prompts.topic(value),
       );
       this.logger.info(JSON.stringify(result));
       const { content } = result.choices[0].message;
       const title = content.split('\n')[0];
-      const createNoticeBoardDto = Object.assign(new CreateNoticeBoardDto(),{
+      const createNoticeBoardDto = Object.assign(new CreateNoticeBoardDto(), {
         title: title,
-        author: "Guest",
+        author: 'Guest',
         content: content,
         category: key,
-        contentType: NOTICE_CONTENT_TYPE.text
-      })
+        contentType: NOTICE_CONTENT_TYPE.text,
+      });
 
-      const createNoticeBoard = await this.noticeBoardService.create(createNoticeBoardDto)
+      const createNoticeBoard = await this.noticeBoardService.create(
+        createNoticeBoardDto,
+      );
 
       return createNoticeBoard;
-    }catch(e){
+    } catch (e) {
       this.logger.error(e);
     }
-
-
   }
 }
