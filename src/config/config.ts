@@ -11,10 +11,11 @@ export const guestUser = {
 };
 
 export const prompts = {
-  topic: (topic:string ) : CreateChatCompletionRequest => {
-    return {
-      model: 'gpt-3.5-turbo',
-      messages: [{
+  topic: (topic: string): CreateChatCompletionRequest => ({
+    model: 'gpt-3.5-turbo',
+    temperature: 2,
+    messages: [
+      {
         role: 'system',
         content: `You are the person responsible for writing the article from now on.
               1. The article must be based on actual facts.
@@ -22,13 +23,13 @@ export const prompts = {
               3. The article should be concluded within 1500 words.
               4. The word count is not explicitly stated.
               5. The title should be written on the first line, and the content should begin from the second line.`
-      },{
+      },
+      {
         role: 'user',
-        content: `Topic: ${topic}`
-      }]
-    }
-
-  },
+        content: `Topic: ${topic}`,
+      },
+    ],
+  }),
   article: (
     title: string,
     url: string,
