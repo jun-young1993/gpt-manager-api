@@ -23,4 +23,9 @@ export class TasksController {
   async topic() {
     return await this.tasksService.topic();
   }
+
+  @Post('sitemap-ping')
+  async sitemapPing(){
+    return await this.tasksService.sitemapPing();
+  }
 }

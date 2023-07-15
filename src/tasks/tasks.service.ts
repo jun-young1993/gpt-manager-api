@@ -285,4 +285,15 @@ export class TasksService {
       this.logger.error(e);
     }
   }
+
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  async sitemapPing(){
+    const result = await fetch("https://www.google.com/ping?sitemap=https://gcon.monster/server-sitemap-index.xml",{
+      method: 'GET'
+    });
+    const text = await result.text();
+    await this.logger.info('[GOOGLE SITEMAP PING]')
+    await this.logger.info(text)
+    return text;
+  }
 }
