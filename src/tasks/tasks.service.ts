@@ -42,49 +42,11 @@ export class TasksService {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Cron('10 10 11 * * *')
-  async syncChat() {
-    try {
-      if (this.configService.get('isDev')) {
-        this.logger.info('[CHAT-SYNC] IS DEV');
-        return true;
-      }
-      this.logger.info('[CHAT-SYNC IDS]');
-
-      const nonSyncRooms = await this.chatService.getNonSyncRooms();
-
-      nonSyncRooms.map(async (chatData, index) => {
-        const { id } = chatData;
-        const cacheChatRoom = await this.redisService.get(id);
-
-        if (cacheChatRoom === null) {
-          await this.chatService.updateSyncRoomByNonSyncRoomId(id);
-        } else {
-          const cacheChats = JSON.parse(cacheChatRoom);
-          cacheChats.map(async (cacheChatDto: CreateChatDto) => {
-            try {
-              await this.chatService.createChat(
-                Object.assign(new CreateChatDto(), cacheChatDto),
-              );
-              await this.chatService.updateSyncRoomByNonSyncRoomId(id);
-            } catch (e) {
-              this.logger.error('[CHAT-SYNC EXCEPTION]', e);
-            }
-          });
-        }
-
-        console.log('cacheChatRoom', cacheChatRoom);
-      });
-    } catch (e) {
-      this.logger.error('[CHAT-SYNC EXCEPTION]', e);
-    }
-  }
-
   @Cron(CronExpression.EVERY_4_HOURS)
   async daily() {
     try {
       if (this.configService.get('isDev')) {
-        this.logger.info('[CHAT-SYNC] IS DEV');
+        this.logger.info(`[TASK: DAILY] IS DEV ${this.configService.get('isDev')}`);
         return true;
       }
       for (const [_, geo] of Object.entries(GooGleTrendGeos)) {
@@ -237,7 +199,7 @@ export class TasksService {
   async topic() {
     try {
       if (this.configService.get('isDev')) {
-        this.logger.info('[CHAT-SYNC] IS DEV');
+        this.logger.info(`[TASK: TOPIC] IS DEV ${this.configService.get('isDev')}`);
         return true;
       }
       const categoryCode = 'commu-category';
@@ -288,6 +250,11 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async sitemapPing(){
+    if (this.configService.get('isDev')) {
+      this.logger.info(`[TASK: SITEMAP PING] IS DEV ${this.configService.get('isDev')}`);
+      return true;
+    }
+
     const result = await fetch("https://www.google.com/ping?sitemap=https://gcon.monster/server-sitemap-index.xml",{
       method: 'GET'
     });

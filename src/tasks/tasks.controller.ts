@@ -7,13 +7,6 @@ import {GoogleGeoCode} from "../google-trends/google-trends.interface";
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
-  @Post('chat-sync')
-  async tasks(@Req() req) {
-    console.log(req.user);
-
-    return await this.tasksService.syncChat();
-  }
-
   @Post('daily')
   async daily() {
     return await this.tasksService.daily();
