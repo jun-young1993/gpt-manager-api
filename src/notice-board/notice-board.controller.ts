@@ -40,6 +40,9 @@ export class NoticeBoardController {
       where: {
         category: category,
       },
+      order: {
+        id: "DESC",
+      },
     });
   }
 
