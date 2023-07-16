@@ -90,7 +90,7 @@ export class TasksService {
                 this.logger.info(
                   `article content count ${articleContentCount}`,
                 );
-                if (articleContentCount <= 3) {
+                if (articleContentCount <= 1) {
                   const result = await this.gptService.createChatCompletion(
                     prompts.article(title, url, geo),
                   );
