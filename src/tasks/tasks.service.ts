@@ -250,9 +250,10 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async sitemapPing(){
+
     if (this.configService.get('isDev')) {
       this.logger.info(`[TASK: SITEMAP PING] IS DEV ${this.configService.get('isDev')}`);
-      return true;
+      return false;
     }
 
     const result = await fetch("https://www.google.com/ping?sitemap=https://gcon.monster/server-sitemap-index.xml",{
