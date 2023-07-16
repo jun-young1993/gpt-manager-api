@@ -26,6 +26,7 @@ import { CodeService } from '../code/code.service';
 import { NoticeBoardService } from '../notice-board/notice-board.service';
 import { CreateNoticeBoardDto } from '../notice-board/dto/create-notice-board.dto';
 import { ConfigService } from '@nestjs/config';
+import fetch from 'cross-fetch';
 
 @Injectable()
 export class TasksService {
