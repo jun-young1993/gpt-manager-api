@@ -8,7 +8,7 @@ import {
 import { CreateNoticeBoardDto } from '../dto/create-notice-board.dto';
 import { IsEnum } from 'class-validator';
 import { IS_DELETED } from 'src/typeorm/typeorm.interface';
-
+export type NoticeBoardColumn = typeof NoticeBoard[keyof typeof NoticeBoard];
 @Entity('notice_board')
 export class NoticeBoard {
   @PrimaryGeneratedColumn('increment')
