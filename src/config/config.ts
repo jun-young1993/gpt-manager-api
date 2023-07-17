@@ -27,7 +27,7 @@ export const prompts = {
       },
       {
         role: 'user',
-        content: `Topic: ${topic} and ${faker.random.word()}`,
+        content: `Topic: ${topic} and ${faker.lorem.word()}`,
       },
     ],
   }),
