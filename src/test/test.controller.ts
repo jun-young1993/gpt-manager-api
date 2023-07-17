@@ -15,7 +15,7 @@ export class TestController {
       password: faker.internet.password(),
       birthdate: faker.date.birthdate(),
       registeredAt: faker.date.past(),
-      word: faker.word.words(),
+      word: faker.random.word(),
     };
   }
 }
