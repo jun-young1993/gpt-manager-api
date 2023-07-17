@@ -26,6 +26,7 @@ import { CommentsModule } from './comments/comments.module';
 import { CodeModule } from './code/code.module';
 import { CodeItemModule } from './code-item/code-item.module';
 import { NoticeBoardModule } from './notice-board/notice-board.module';
+import { TestModule } from './test/test.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { NoticeBoardModule } from './notice-board/notice-board.module';
     CodeModule,
     CodeItemModule,
     NoticeBoardModule,
+    TestModule,
   ],
   providers: [
     {

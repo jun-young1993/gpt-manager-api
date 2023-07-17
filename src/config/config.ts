@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { GoogleGeoCode } from '../google-trends/google-trends.interface';
 import { CreateChatCompletionRequest } from 'openai';
 
@@ -26,7 +27,7 @@ export const prompts = {
       },
       {
         role: 'user',
-        content: `Topic: ${topic}`,
+        content: `Topic: ${topic} and ${faker.word.words()}`,
       },
     ],
   }),

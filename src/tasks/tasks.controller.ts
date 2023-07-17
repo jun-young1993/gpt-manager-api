@@ -1,7 +1,6 @@
 import {Controller, Get, Param, Post, Req} from '@nestjs/common';
 
 import { TasksService } from 'src/tasks/tasks.service';
-import {GoogleGeoCode} from "../google-trends/google-trends.interface";
 
 @Controller('tasks')
 export class TasksController {
@@ -21,4 +20,5 @@ export class TasksController {
   async sitemapPing(){
     return await this.tasksService.sitemapPing();
   }
+
 }
