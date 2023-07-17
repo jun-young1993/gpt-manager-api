@@ -16,7 +16,7 @@ export class TestController {
       birthdate: faker.date.birthdate(),
       registeredAt: faker.date.past(),
       sample_word: faker.word.sample(),
-      lorem_word: faker.lorem.word({ min: 3 }),
+      lorem_word: faker.lorem.word(),
     };
   }
 }
