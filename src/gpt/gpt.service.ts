@@ -35,8 +35,8 @@ export class GptService {
     createChatCompletionRequest: CreateChatCompletionRequest,
   ) {
     this.logger.info(
-      `[createChatCompletion: params]`,
-      createChatCompletionRequest,
+      `[createChatCompletion: params]
+      ${JSON.stringify(createChatCompletionRequest)}`,
     );
 
     const openai = this.getOpenai();
