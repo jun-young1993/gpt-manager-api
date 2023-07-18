@@ -7,6 +7,7 @@ export const guestUser = {
   id: _GUEST,
   email: _GUEST,
   name: _GUEST,
+  avatar: 'https://avatars.githubusercontent.com/u/2864867',
   createdAt: new Date(),
   updatedAt: new Date(),
 };

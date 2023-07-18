@@ -15,24 +15,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly configService: ConfigService,
     private readonly userService: UserService, // private readonly jwtService: JwtService
   ) {
-    // if (request?.cookies?.Authentication === undefined) {
-    // const payload: TokenPayload = User.createGuestUser();
-    // console.log('guest payload',payload);
-    // const guestToken = await this.jwtService.signAsync(payload);
-    //   return guestToken;
-    // }
+
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
           console.log('request?.cookies', request?.cookies);
-          // if (request?.cookies?.Authentication === undefined) {
-          //   const payload: TokenPayload = User.createGuestUser();
-          //   console.log('guest payload',payload);
-          //   const guestToken = await this.jwtService.signAsync(payload);
-          //   return guestToken;
-          // }
+
           return this.extractTokenFromRequest(request);
-          return request?.cookies?.Authentication;
         },
       ]),
       secretOrKey: configService.get('jwt.secret'),
@@ -40,8 +29,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   private extractTokenFromRequest(request: Request): string | undefined {
-    console.log('request?.cookies?.Authentication',request?.cookies?.Authentication)
-    console.log('typeof',typeof request?.cookies?.Authentication)
     return request?.cookies?.Authentication;
   }
 
@@ -59,7 +46,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!this.isUndefinedAuthentication(token)) {
       // 토큰이 없는 경우 비회원 객체를 생성하여 반환
       const guestUser = User.createGuestUser();
-      console.log('guestUser', guestUser);
       return this.success(guestUser);
     }
 
@@ -75,9 +61,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: TokenPayload): Promise<User | NotFoundException> {
     const { email } = payload;
-    console.log("payload",payload)
+
     if (this.isGuest(email)) {
-      console.log(payload);
       return User.createGuestUser();
     }
     const user = await this.userService.findOneOrFail({
