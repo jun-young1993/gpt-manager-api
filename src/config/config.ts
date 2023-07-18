@@ -25,8 +25,7 @@ export const prompts = {
               3. The article should be concluded within 1500 words.
               4. The word count is not explicitly stated.
               5. The title should be written on the first line, and the content should begin from the second line.
-              6. Please keep it simple, readable, and engaging.
-              7. Please summarize the text without exceeding 700 words`
+              6. Please summarize the text without exceeding 100 words`
       },
       {
         role: 'user',
