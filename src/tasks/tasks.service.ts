@@ -200,7 +200,9 @@ export class TasksService {
   async topic() {
     try {
       if (this.configService.get('isDev')) {
-        this.logger.info(`[TASK: TOPIC] IS DEV ${this.configService.get('isDev')}`);
+        this.logger.info(
+          `[TASK: TOPIC] IS DEV ${this.configService.get('isDev')}`,
+        );
         return true;
       }
       const categoryCode = 'commu-category';

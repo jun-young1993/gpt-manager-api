@@ -8,6 +8,7 @@ import {
 import { CreateUserDto } from '../dto/create-user.dto';
 import { v4 as uuid } from 'uuid';
 import { guestUser } from 'src/config/config';
+import { faker } from '@faker-js/faker';
 
 @Entity('user')
 export class User {
@@ -22,6 +23,9 @@ export class User {
 
   @Column()
   public name: string;
+
+  @Column()
+  public avatar?: string;
 
   @CreateDateColumn({
     name: 'created_at',
@@ -41,6 +45,7 @@ export class User {
   static createFromDto(createDto: CreateUserDto): User {
     const user = new User();
     user.id = uuid();
+    user.avatar = faker.image.avatarGitHub();
     user.email = createDto.email;
     user.name = createDto.name ?? createDto.email;
     return user;
@@ -48,9 +53,6 @@ export class User {
 
   static toUserPayload(userEntity: User): User {
     const user = new User();
-    user.id = userEntity.id;
-    user.email = userEntity.email;
-    user.name = userEntity.name;
-    return user;
+    return Object.assign(user, userEntity);
   }
 }

@@ -12,6 +12,7 @@ export class TestController {
       username: faker.internet.userName(),
       email: faker.internet.email(),
       avatar: faker.image.avatar(),
+      githubAvatar: faker.image.avatarGitHub(),
       password: faker.internet.password(),
       birthdate: faker.date.birthdate(),
       registeredAt: faker.date.past(),
