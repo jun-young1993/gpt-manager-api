@@ -5,7 +5,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from 'src/user/user.service';
 import { Request } from 'express';
-import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
 import { _GUEST } from 'src/config/config';
 
@@ -15,12 +14,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly configService: ConfigService,
     private readonly userService: UserService, // private readonly jwtService: JwtService
   ) {
-
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          console.log('request?.cookies', request?.cookies);
-
           return this.extractTokenFromRequest(request);
         },
       ]),
@@ -32,18 +28,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return request?.cookies?.Authentication;
   }
 
-  private isUndefinedAuthentication(token:string | undefined){
-    if(token === 'undefined' || token === undefined){
-      return false;
+  private extractGuestFromRequest(request: Request): string | string[] {
+    return request?.headers?.guest;
+  }
+
+  private checkGuest(headerValue: string | string[]) {
+    if (headerValue === _GUEST) {
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   async authenticate(request: Request): Promise<any> {
-    const token = this.extractTokenFromRequest(request); // 토큰 추출
-    
-    if (!this.isUndefinedAuthentication(token)) {
+    const isGuest = this.extractGuestFromRequest(request);
+
+    if (this.checkGuest(String(isGuest))) {
       // 토큰이 없는 경우 비회원 객체를 생성하여 반환
       const guestUser = User.createGuestUser();
       return this.success(guestUser);
@@ -52,7 +52,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return super.authenticate(request); // 기존 인증 로직 실행
   }
 
-  private isGuest(email){
+  private isGuest(email) {
     if (email === _GUEST) {
       return true;
     }
