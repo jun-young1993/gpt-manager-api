@@ -38,6 +38,13 @@ export class Comment {
   public parentCommentId?: number;
 
   @Column({
+    type: 'varchar',
+    length: 36,
+    name: 'user_id',
+  })
+  userId: string;
+
+  @Column({
     name: 'is_deleted',
     type: 'varchar',
     length: 1,
