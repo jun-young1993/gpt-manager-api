@@ -259,7 +259,7 @@ export class TasksService {
       return false;
     }
 
-    const result = await fetch("https://www.google.com/ping?sitemap=https://gcon.monster/server-sitemap-index.xml",{
+    const result = await fetch("https://www.google.com/ping?sitemap=https://gcon.monster/sitemap.xml",{
       method: 'GET'
     });
     const text = await result.text();
