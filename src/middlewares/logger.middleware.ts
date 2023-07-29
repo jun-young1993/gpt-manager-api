@@ -12,19 +12,19 @@ export class LoggerMiddleware implements NestMiddleware {
   ) {}
 
   use(request: Request, response: Response, next: NextFunction): void {
-    const { ip, method, originalUrl, query, body } = request;
-    const userAgent = request.get('user-agent') || ''; // header에서 가져옴
+    // const { ip, method, originalUrl, query, body } = request;
+    // const userAgent = request.get('user-agent') || ''; // header에서 가져옴
 
     // 응답이 끝났을 때
     response.on('finish', () => {
-      const { statusCode } = response;
-      const contentLength = response.get('content-length');
-
-      this.logger.info(`
-         info : ${method} ${originalUrl} ${statusCode} ${contentLength} - ${userAgent} ${ip}
-         query : ${JSON.stringify(query)}
-         body : ${JSON.stringify(body)}
-        `);
+     //  const { statusCode } = response;
+     //  const contentLength = response.get('content-length');
+     //
+     //  this.logger.info('[REQUEST]',{
+     //     info : `${method} ${originalUrl} ${statusCode} ${contentLength} - ${userAgent} ${ip}`,
+     //     query : `${JSON.stringify(query)}`,
+     //     body : `${JSON.stringify(body)}`
+     // });
     });
 
     next();

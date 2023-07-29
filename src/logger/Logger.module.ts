@@ -5,6 +5,8 @@ import {
 } from 'nest-winston';
 import * as winston from 'winston';
 import * as winstonDaily from 'winston-daily-rotate-file';
+import {APP_INTERCEPTOR} from "@nestjs/core";
+import {LoggingInterceptor} from "../interceptor/logging.interceptor";
 
 @Module({
   imports: [

@@ -5,7 +5,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { APP_PIPE } from '@nestjs/core';
+import {APP_INTERCEPTOR, APP_PIPE} from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from './redis/redis.module';
 import { ConfigModule } from './config/config.module';
@@ -27,6 +27,7 @@ import { CodeModule } from './code/code.module';
 import { CodeItemModule } from './code-item/code-item.module';
 import { NoticeBoardModule } from './notice-board/notice-board.module';
 import { TestModule } from './test/test.module';
+import {LoggingInterceptor} from "./interceptor/logging.interceptor";
 
 @Module({
   imports: [
@@ -57,11 +58,16 @@ import { TestModule } from './test/test.module';
         forbidNonWhitelisted: true,
       }),
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
     TasksService,
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
+
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }

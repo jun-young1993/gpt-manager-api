@@ -3,12 +3,14 @@ import { AppModule } from './app.module';
 import {VersioningType} from "@nestjs/common";
 import * as cookieParser from 'cookie-parser';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-
+import {LoggingInterceptor} from "./interceptor/logging.interceptor";
+import {Logger} from "winston";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,{
     bufferLogs: true
   });
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+  app.useGlobalInterceptors(new LoggingInterceptor(app.get(WINSTON_MODULE_NEST_PROVIDER)));
   app.use(cookieParser());
   app.enableVersioning({
     type: VersioningType.URI,
